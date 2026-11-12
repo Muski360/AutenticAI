@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FFFFFF">
+  <meta name="description" content="AutenticAI — Uma maneira mais clara de questionar informações e consultar evidências. Protótipo conceitual.">
+  <title>AutenticAI — Da dúvida à evidência</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+  <div class="scroll-meter" aria-hidden="true"><span id="scroll-meter-line"></span></div>
+
+  <!-- SVG sprite: interface icons, not a provisional brand symbol. -->
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="ic-arrow-up-right" viewBox="0 0 24 24"><path d="M5 19 19 5M7 5h12v12"/></symbol>
+    <symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-7-7 7 7-7 7"/></symbol>
+    <symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M20 12H4m7 7-7-7 7-7"/></symbol>
+    <symbol id="ic-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="ic-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="ic-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="ic-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h8"/></symbol>
+    <symbol id="ic-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+    <symbol id="ic-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
+    <symbol id="ic-scan" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3m13 5h3a2 2 0 0 0 2-2v-3M3 12h18"/></symbol>
+    <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-2.8-2.8.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14h-.2v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></symbol>
+    <symbol id="ic-shield" viewBox="0 0 24 24"><path d="m12 22 1.5-.6C19.4 19 21 15.9 21 11V5l-9-3-9 3v6c0 4.9 1.6 8 7.5 10.4z"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="ic-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="ic-external" viewBox="0 0 24 24"><path d="M13 5h6v6M19 5l-9 9M19 13v6H5V5h6"/></symbol>
+    <symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="ic-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 4v6m4-6v6"/></symbol>
+  </svg>
+
+  <!-- ========= MARKETING EXPERIENCE ========= -->
+  <div id="landing-view">
+    <header class="site-header" id="site-header">
+      <div class="site-header__inner frame">
+        <button type="button" class="brand brand-button" data-go-home aria-label="AutenticAI — ir ao início">Autentic<span>AI</span><span class="brand-period">.</span></button>
+        <nav class="desktop-nav" aria-label="Navegação principal">
+          <a href="#metodo">O método</a>
+          <a href="#plataformas">Onde usar</a>
+          <a href="#compromisso">Nosso compromisso</a>
+        </nav>
+        <div class="header-actions">
+          <span class="header-status"><span class="live-pip"></span> PROJETO EM DESENVOLVIMENTO</span>
+          <button class="button button--dark button--small" type="button" data-open-app="new">Explorar protótipo <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero frame" aria-labelledby="hero-heading">
+        <div class="hero-eyebrow eyebrow"><span class="line-chip">01 / 04</span> O NOVO JEITO DE QUESTIONAR</div>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <h1 id="hero-heading">Antes de<br><span class="headline-special">acreditar<span class="headline-dot">,</span></span><br><span class="headline-outline">investigue.</span></h1>
+            <p class="hero-intro">Informações circulam rápido. A compreensão precisa ir mais fundo. Conheça a plataforma que coloca evidências e contexto ao alcance de um clique.</p>
+            <div class="hero-buttons">
+              <button type="button" class="button button--blue button--large" data-open-app="new">Fazer uma análise <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button>
+              <a href="#metodo" class="text-link">Entenda como funciona <svg class="icon"><use href="#ic-arrow-right"/></svg></a>
+            </div>
+            <div class="hero-footnote"><span class="hairline-dot"></span><span>Uma experiência mais consciente com o que você lê.</span></div>
+          </div>
+
+          <div class="hero-art" aria-label="Demonstração ilustrativa de uma afirmação organizada em contexto e evidências">
+            <div class="hero-art__topline"><span>VISUALIZAÇÃO / 001</span><span>EXEMPLO ILUSTRATIVO <span class="status-glow"></span></span></div>
+            <div class="evidence-canvas" id="evidence-canvas">
+              <div class="evidence-glow" aria-hidden="true"></div>
+              <div class="evidence-number" aria-hidden="true">?</div>
+              <div class="evidence-input">
+                <span class="evidence-label">01 — A AFIRMAÇÃO</span>
+                <p>“A Lua emite<br>luz própria.”</p>
+                <span class="evidence-input__token"><span class="token-dot"></span> Prévia explicativa</span>
+              </div>
+              <svg class="evidence-lines" viewBox="0 0 470 460" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M237 178 V228 Q237 240 249 240 H322 Q334 240 334 252 V278" class="pipe-base" />
+                <path d="M237 178 V228 Q237 240 249 240 H322 Q334 240 334 252 V278" class="pipe-active" />
+                <path d="M237 178 V228 Q237 240 225 240 H133 Q121 240 121 252 V278" class="pipe-base" />
+                <path d="M237 178 V228 Q237 240 225 240 H133 Q121 240 121 252 V278" class="pipe-active pipe-active--delay" />
+                <circle cx="237" cy="240" r="6" class="pipe-hub" />
+              </svg>
+              <div class="evidence-branches">
+                <div class="evidence-node evidence-node--left"><span class="evidence-label">02 — O CONTEXTO</span><span class="evidence-node__big">Luz solar</span><span class="evidence-node__small">Reflexão na superfície</span></div>
+                <div class="evidence-node evidence-node--right"><span class="evidence-label">03 — A EVIDÊNCIA</span><span class="evidence-node__big"><span class="mini-indicator mini-indicator--red"></span> Contradito</span><span class="evidence-node__small">Com base em referências</span></div>
+              </div>
+              <div class="evidence-canvas__bottom"><span>DA DÚVIDA À EVIDÊNCIA</span><span>↗ 001</span></div>
+            </div>
+            <div class="hero-art__bottomline"><span>O CONTEÚDO É APENAS UMA DEMONSTRAÇÃO</span><button class="icon-link" type="button" data-open-app="result">Abrir relatório <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div>
+          </div>
+        </div>
+        <div class="hero-bottom"><span>01 — CLAREZA ANTES DE CERTEZA</span><span class="hero-bottom__center">A VERDADE NÃO CABE NUMA PORCENTAGEM.</span><a href="#metodo" aria-label="Role para descobrir mais"><svg class="icon"><use href="#ic-arrow-right"/></svg> DESCUBRA</a></div>
+      </section>
+
+      <section class="statement-section" aria-labelledby="statement-title">
+        <div class="frame statement-wrap">
+          <div class="statement-kicker eyebrow"><span class="tiny-square"></span> O PONTO DE PARTIDA</div>
+          <h2 id="statement-title">Nem toda informação<br>vem com <span class="text-blue">contexto.</span></h2>
+          <div class="statement-bottom"><span class="big-number">01<span>/</span>03</span><p>Uma manchete convincente não substitui uma fonte. Nosso papel não é dizer em que acreditar — é tornar mais fácil descobrir o que sustenta cada afirmação.</p></div>
+        </div>
+      </section>
+
+      <section class="method-section" id="metodo" aria-labelledby="method-title">
+        <div class="frame method-wrap">
+          <div class="method-top"><div class="eyebrow light-eyebrow"><span class="line-chip line-chip--light">02 / 04</span> A EXPERIÊNCIA AUTENTICAI</div><p>Um caminho simples. Sem conclusões apressadas.</p></div>
+          <div class="method-head"><h2 id="method-title">Do ruído<br>à <span>clareza.</span></h2><div class="method-dial" aria-hidden="true"><div class="method-dial__inner">A—AI</div><span class="dial-orbit dial-orbit--1"></span><span class="dial-orbit dial-orbit--2"></span></div></div>
+          <div class="method-steps">
+            <article class="method-step"><div class="method-step__number">01</div><div class="method-step__content"><h3>Encontre algo que merece uma segunda leitura.</h3><p>Cole um texto, insira um link ou escolha uma imagem. Você tem controle sobre o que será analisado.</p></div><div class="method-step__icon"><svg class="icon"><use href="#ic-plus"/></svg></div></article>
+            <article class="method-step"><div class="method-step__number">02</div><div class="method-step__content"><h3>Peça contexto, não um veredito.</h3><p>Revise o material selecionado e solicite uma análise de afirmações, justificativas e fontes.</p></div><div class="method-step__icon"><svg class="icon"><use href="#ic-scan"/></svg></div></article>
+            <article class="method-step"><div class="method-step__number">03</div><div class="method-step__content"><h3>Entenda o porquê de cada resultado.</h3><p>Explore as evidências, inclusive quando elas são mistas ou insuficientes para uma conclusão.</p></div><div class="method-step__icon"><svg class="icon"><use href="#ic-arrow-up-right"/></svg></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="product-section frame" id="produto" aria-labelledby="product-title">
+        <div class="product-header"><span class="eyebrow"><span class="line-chip">03 / 04</span> POR DENTRO DO PRODUTO</span><div class="product-head-row"><h2 id="product-title">A resposta importa.<br><span class="text-blue">A explicação, mais.</span></h2><p>Uma interface feita para quem quer entender — não apenas receber um rótulo. Todo resultado tem espaço para dúvidas, evidências e fontes.</p></div></div>
+        <div class="product-demo" id="product-demo">
+          <div class="product-demo__bar"><div class="fake-window-dots"><i></i><i></i><i></i></div><span>AutenticAI / Prévia de relatório</span><span class="fake-window-right">MODO DEMONSTRAÇÃO</span></div>
+          <div class="product-demo__body">
+            <aside class="product-demo__sidebar" aria-hidden="true"><div class="mini-brand">Autentic<span>AI</span>.</div><div class="fake-menu-item fake-menu-item--current"><span class="fake-menu-square"></span> Nova análise</div><div class="fake-menu-item"><span class="fake-menu-square"></span> Histórico</div><div class="fake-menu-bottom">INTERFACE CONCEITUAL<br>VERSÃO 0.1</div></aside>
+            <div class="product-demo__main">
+              <div class="demo-heading"><span class="demo-heading__kicker">RELATÓRIO #EXEMPLO-001</span><span class="demo-heading__dot">● MODELO VISUAL</span></div>
+              <h3>A informação, com mais contexto.</h3>
+              <div class="report-visual"><div class="report-visual__main"><span class="preview-overline">AFIRMAÇÃO IDENTIFICADA</span><p class="report-visual__quote">“A Lua emite luz própria.”</p><span class="semantic-tag semantic-tag--danger"><span></span> Contradito</span><div class="report-visual__rule"></div><span class="preview-overline">O QUE AS EVIDÊNCIAS INDICAM</span><p class="report-visual__explanation">A Lua não produz a luz visível que observamos: sua superfície reflete a luz do Sol.</p></div><div class="report-visual__aside"><span class="preview-overline">LEITURA DO RELATÓRIO</span><div class="report-fact"><span>01</span> Afirmação</div><div class="report-fact"><span>02</span> Classificação</div><div class="report-fact"><span>03</span> Justificativa</div><div class="report-fact"><span>04</span> Fontes</div><div class="report-small-note">Exemplo ilustrativo, sem consulta real a fontes.</div></div></div>
+              <div class="product-demo__footer"><div><span class="mini-number">02</span> Eixos separados: fatos e indícios de IA</div><button type="button" data-open-app="result">Ver o relatório completo <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="product-caption"><span>FIG. 01 — UMA INTERFACE QUE EXPLICA, EM VEZ DE APENAS CLASSIFICAR.</span><button class="text-link" type="button" data-open-app="new">Experimentar a interface <svg class="icon"><use href="#ic-arrow-right"/></svg></button></div>
+      </section>
+
+      <section class="platforms-section" id="plataformas" aria-labelledby="platforms-title">
+        <div class="frame"><div class="platforms-intro"><span class="eyebrow"><span class="line-chip">04 / 04</span> SEM MUDAR SEUS HÁBITOS</span><h2 id="platforms-title">Onde a dúvida<br><span class="text-blue">acontece.</span></h2><p>Três maneiras de acessar uma mesma ideia: a verificação deve estar disponível quando você precisar dela.</p></div>
+          <div class="platforms-grid">
+            <article class="platform-card platform-card--web"><div class="platform-card__top"><span>01 / WEB</span><svg class="icon"><use href="#ic-arrow-up-right"/></svg></div><div class="platform-web-art"><div class="platform-web-browser"><div class="platform-web-browser__top"><i></i><i></i><i></i><span>autenticai / análise</span></div><div class="platform-web-browser__content"><span>Nova análise</span><div class="platform-sample-line"></div><div class="platform-sample-line platform-sample-line--short"></div><div class="platform-sample-input">Cole seu texto aqui<span>↗</span></div></div></div></div><div class="platform-card__bottom"><h3>No seu navegador.</h3><p>Um espaço para investigar textos, links e imagens com calma.</p></div></article>
+            <article class="platform-card platform-card--extension"><div class="platform-card__top"><span>02 / CHROME</span><svg class="icon"><use href="#ic-arrow-up-right"/></svg></div><div class="extension-art"><div class="extension-page"><span class="extension-page__line"></span><span class="extension-page__line short"></span><span class="extension-page__line"></span></div><div class="extension-popup"><div class="extension-popup__head">Autentic<span>AI</span><span>●</span></div><div class="extension-popup__title">Verifique esta página.</div><div class="extension-popup__button">Analisar página <span>↗</span></div><div class="extension-popup__caption">Somente quando você solicitar.</div></div></div><div class="platform-card__bottom"><h3>Enquanto você navega.</h3><p>Uma extensão pensada para o contexto em que a informação aparece.</p></div></article>
+            <article class="platform-card platform-card--mobile"><div class="platform-card__top"><span>03 / ANDROID</span><svg class="icon"><use href="#ic-arrow-up-right"/></svg></div><div class="phone-art"><div class="phone-outline"><div class="phone-camera"></div><div class="phone-screen"><span class="phone-time">9:41</span><span class="phone-logo">Autentic<span>AI</span>.</span><div class="phone-hello">Uma dúvida?<br><strong>Vamos olhar<br>mais de perto.</strong></div><div class="phone-call-to-action"><span class="phone-scan-icon">⌗</span><span>Analisar tela</span><span>↗</span></div><div class="phone-secondary">Você escolhe quando analisar.</div></div></div></div><div class="platform-card__bottom"><h3>Na palma da mão.</h3><p>Peça análises pontuais, com autorização e revisão do conteúdo.</p></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="principles-section frame" id="compromisso" aria-labelledby="principles-title"><div class="principles-left"><span class="eyebrow"><span class="tiny-square"></span> TECNOLOGIA COM LIMITES CLAROS</span><h2 id="principles-title">Sua tela<br>não é nosso<br><span class="text-blue">território.</span></h2></div><div class="principles-right"><p class="principles-lead">A proteção começa quando você decide. E termina onde a sua autorização termina.</p><div class="principle-row"><span class="principle-row__number">01</span><div><h3>Ação, não vigilância.</h3><p>Nenhuma análise contínua em segundo plano.</p></div></div><div class="principle-row"><span class="principle-row__number">02</span><div><h3>Evidências, não certezas artificiais.</h3><p>Resultados justificados, com dúvidas e limitações explícitas.</p></div></div><div class="principle-row"><span class="principle-row__number">03</span><div><h3>Você mantém o controle.</h3><p>Prévia e confirmação antes do compartilhamento do conteúdo.</p></div></div></div></section>
+
+      <section class="closing-section"><div class="frame closing-inner"><div class="closing-watermark" aria-hidden="true">?</div><span class="eyebrow light-eyebrow">UMA NOVA FORMA DE OLHAR</span><h2>A próxima<br>pergunta pode<br><span>mudar tudo.</span></h2><div class="closing-bottom"><p>Questione o que recebe.<br>Confira as evidências.<br>Decida com mais informação.</p><button class="button button--white button--large" type="button" data-open-app="new">Conhecer o protótipo <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div></div></section>
+    </main>
+    <footer class="site-footer frame"><div class="site-footer__main"><span class="footer-logo">Autentic<span>AI</span>.</span><span>Mais clareza. Menos ruído.</span><a href="#main-content">Voltar ao topo ↑</a></div><div class="site-footer__bottom"><span>© 2026 AutenticAI — PROJETO EM PLANEJAMENTO</span><span>Protótipo visual. Nenhuma verificação real é realizada.</span><span>DESIGN CONCEPT / V.01</span></div></footer>
+  </div>
+
+  <!-- ========= FRONT-END APPLICATION PROTOTYPE ========= -->
+  <div id="app-view" hidden>
+    <div class="app-shell">
+      <aside class="app-sidebar" aria-label="Navegação do protótipo">
+        <div class="sidebar-top"><button type="button" class="brand brand-button" data-go-home>Autentic<span>AI</span><span class="brand-period">.</span></button><span class="sidebar-top__caption">WORKSPACE / DEMO</span></div>
+        <div class="sidebar-section-label">ESPAÇO DE ANÁLISE</div>
+        <nav class="sidebar-nav" aria-label="Áreas do aplicativo">
+          <button type="button" class="sidebar-link" data-app-nav="overview"><svg class="icon"><use href="#ic-grid"/></svg> Visão geral</button>
+          <button type="button" class="sidebar-link" data-app-nav="new"><svg class="icon"><use href="#ic-plus"/></svg> Nova análise <span class="sidebar-link__hotkey">+</span></button>
+          <button type="button" class="sidebar-link" data-app-nav="result"><svg class="icon"><use href="#ic-file"/></svg> Relatório de exemplo</button>
+          <button type="button" class="sidebar-link" data-app-nav="history"><svg class="icon"><use href="#ic-clock"/></svg> Histórico</button>
+        </nav>
+        <div class="sidebar-section-label sidebar-section-label--last">PREFERÊNCIAS</div>
+        <nav class="sidebar-nav"><button type="button" class="sidebar-link" data-app-nav="settings"><svg class="icon"><use href="#ic-settings"/></svg> Configurações</button></nav>
+        <div class="sidebar-bottom"><div class="sidebar-notice"><span class="sidebar-notice__dot"></span> MODO CONCEITUAL <p>Esta interface simula interações. Nenhum conteúdo é enviado ou analisado.</p></div><button type="button" class="sidebar-return" data-go-home><svg class="icon"><use href="#ic-arrow-left"/></svg> Voltar para o site</button></div>
+      </aside>
+      <div class="app-content">
+        <header class="app-topbar"><div class="app-topbar__left"><button type="button" class="app-mobile-brand" data-go-home>Autentic<span>AI</span>.</button><div class="app-breadcrumb">PLATAFORMA <span>/</span> <span id="app-breadcrumb-current">NOVA ANÁLISE</span></div></div><div class="app-topbar__right"><span class="app-demo-pill"><span></span> PROTÓTIPO</span><button class="avatar-button" type="button" data-app-nav="settings" aria-label="Ver configurações">A</button></div></header>
+        <main class="app-main" id="app-main">
+          <section class="app-page" id="page-overview" data-page="overview" hidden><div class="app-intro"><span class="eyebrow">UM LUGAR PARA QUESTIONAR</span><h1>Mais contexto.<br><span class="text-blue">Menos suposições.</span></h1><p>Acompanhe o caminho entre uma afirmação e as evidências que ajudam a compreendê-la.</p></div><div class="overview-feature"><div><span class="overview-feature__index">01 / COMEÇAR</span><h2>O primeiro passo<br>é perguntar.</h2><p>Selecione um conteúdo, confira a prévia e descubra como seria um relatório explicativo.</p><button class="button button--white" type="button" data-app-nav="new">Nova análise <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div><div class="overview-feature__art" aria-hidden="true"><span>?</span><span>!</span><span>↗</span></div></div><div class="overview-lower"><div><span class="eyebrow">UM RELATÓRIO TRANSPARENTE</span><h3>Nenhuma classificação sem explicação.</h3></div><button type="button" class="overview-report-link" data-app-nav="result">Explorar relatório ilustrativo <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div></section>
+
+          <section class="app-page" id="page-new" data-page="new" hidden>
+            <div class="app-intro app-intro--compact"><span class="eyebrow">01 / NOVA INVESTIGAÇÃO</span><h1>O que vamos<br><span class="text-blue">investigar?</span></h1><p>Escolha um conteúdo. O envio será precedido de uma prévia — neste protótipo, nenhuma informação sai do seu navegador.</p></div>
+            <div class="new-analysis-layout"><div class="analysis-editor"><div class="analysis-editor__tabs" role="tablist" aria-label="Tipo de conteúdo"><button role="tab" aria-selected="true" tabindex="0" id="tab-text" aria-controls="panel-text" type="button" data-content-tab="text"><svg class="icon"><use href="#ic-file"/></svg> Texto</button><button role="tab" aria-selected="false" tabindex="-1" id="tab-link" aria-controls="panel-link" type="button" data-content-tab="link"><svg class="icon"><use href="#ic-link"/></svg> Link</button><button role="tab" aria-selected="false" tabindex="-1" id="tab-image" aria-controls="panel-image" type="button" data-content-tab="image"><svg class="icon"><use href="#ic-image"/></svg> Imagem</button></div>
+                <form id="analysis-form" novalidate>
+                  <div class="editor-panel" id="panel-text" role="tabpanel" aria-labelledby="tab-text"><label for="claim-text">Conteúdo para analisar</label><textarea id="claim-text" rows="8" spellcheck="true" placeholder="Cole aqui uma notícia, trecho ou afirmação...">A Lua emite luz própria.</textarea><div class="input-helper"><span>Exemplo pré-preenchido para explorar a interface.</span><span id="character-counter">25 caracteres</span></div></div>
+                  <div class="editor-panel" id="panel-link" role="tabpanel" aria-labelledby="tab-link" hidden><label for="claim-url">Endereço da página</label><input type="url" id="claim-url" placeholder="https://exemplo.com/noticia"><p class="input-assist">Em um produto real, o conteúdo da página seria obtido somente após sua confirmação. Aqui exibiremos apenas a prévia da URL.</p></div>
+                  <div class="editor-panel" id="panel-image" role="tabpanel" aria-labelledby="tab-image" hidden><label for="claim-image">Imagem para analisar</label><div class="upload-drop"><svg class="icon"><use href="#ic-image"/></svg><strong>Escolha uma imagem</strong><p>Prévia local apenas — nenhum arquivo será enviado.</p><label for="claim-image" class="button button--outline">Selecionar arquivo</label><input type="file" id="claim-image" accept="image/png,image/jpeg,image/webp"><p id="selected-file" class="upload-selected" aria-live="polite"></p></div></div>
+                  <div class="editor-action"><p><svg class="icon"><use href="#ic-lock"/></svg> Você revisa antes de confirmar.</p><button class="button button--blue" type="submit">Revisar conteúdo <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div>
+                </form>
+              </div><aside class="new-analysis-aside"><div class="aside-number">01<span> / 03</span></div><div class="aside-divider"></div><h2>Uma pergunta<br>de cada vez.</h2><p>O fluxo de demonstração tem três etapas: escolher, revisar e visualizar um exemplo de relatório.</p><div class="aside-step"><span>01</span> Escolha o conteúdo <svg class="icon"><use href="#ic-check"/></svg></div><div class="aside-step"><span>02</span> Revise a prévia</div><div class="aside-step"><span>03</span> Explore o relatório</div><div class="aside-disclaimer">Nesta versão, não existe motor de análise, autenticação ou banco de dados.</div></aside></div>
+            <div class="sample-strip"><span class="eyebrow">EXPERIMENTE COM EXEMPLOS</span><div><button type="button" data-fill-sample="moon">A Lua emite luz própria <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button><button type="button" data-fill-sample="sun">O Sol é uma estrela <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div></div>
+          </section>
+
+          <section class="app-page" id="page-result" data-page="result" hidden>
+            <div class="result-heading"><div><span class="eyebrow">02 / UM RELATÓRIO EXPLICATIVO</span><h1>O que as evidências<br><span class="text-blue">nos mostram.</span></h1></div><button class="button button--outline button--small" type="button" data-app-nav="new"><svg class="icon"><use href="#ic-plus"/></svg> Nova análise</button></div>
+            <div class="report-alert"><svg class="icon"><use href="#ic-eye"/></svg><p><strong>Demonstração visual.</strong> Este relatório é ilustrativo. Nenhuma análise foi executada e nenhuma fonte foi consultada durante esta sessão.</p></div>
+            <div class="result-meta"><span>RELATÓRIO / DEMO-001</span><span>VERIFICAÇÃO DE FATOS + INDÍCIOS DE IA</span></div>
+            <div class="report-layout"><div class="report-primary"><article class="report-block"><div class="report-section-count">01 <span>— VERIFICAÇÃO DE FATOS</span></div><span class="report-label">AFIRMAÇÃO SELECIONADA</span><h2 id="report-claim">“A Lua emite luz própria.”</h2><div class="report-verdict"><div><span class="report-label">CLASSIFICAÇÃO EXEMPLIFICATIVA</span><span class="semantic-tag semantic-tag--danger" id="report-status"><span></span> Contradito</span></div><span class="report-verdict__detail">Rótulo textual + justificativa</span></div><div class="report-block__copy"><span class="report-label">JUSTIFICATIVA ILUSTRATIVA</span><p id="report-explanation">A Lua não produz a luz visível que observamos: sua superfície reflete a luz do Sol.</p></div></article>
+              <article class="report-block report-block--sources"><div class="report-section-count">02 <span>— FONTES E CONTEXTO</span></div><h3>O caminho até uma fonte.</h3><p id="report-sources-intro">Em uma análise real, as referências consultadas seriam exibidas aqui com contexto e links verificáveis.</p><div class="source-item"><div class="source-item__number">↗</div><div><strong id="source-title">NASA — Earth's Moon</strong><span id="source-detail">Exemplo de uma fonte que poderia ser consultada; não acessada neste protótipo.</span></div><span class="source-item__pill">EXEMPLO</span></div><p class="source-footnote">Para evitar simular uma pesquisa que não aconteceu, esta tela não atribui citações nem graus de confiança fictícios.</p></article>
+              <article class="report-block report-block--ai"><div class="report-section-count">03 <span>— INDÍCIOS DE IA</span></div><div class="ai-split"><div><h3>Uma questão diferente.</h3><p>Identificar possíveis sinais de geração por IA não é a mesma coisa que determinar a veracidade de um conteúdo.</p></div><div class="ai-unavailable"><span>ANÁLISE DE IA</span><strong>Não avaliado</strong><small>Nenhum detector foi executado.</small></div></div></article>
+            </div><aside class="report-rail"><span class="report-rail__title">COMO LER ESTE RESULTADO</span><div class="report-rail__item"><span>01</span><h3>A afirmação</h3><p>O trecho submetido à avaliação.</p></div><div class="report-rail__item"><span>02</span><h3>A classificação</h3><p>Um resumo contextual, nunca uma certeza absoluta.</p></div><div class="report-rail__item"><span>03</span><h3>As evidências</h3><p>O que permite compreender e contestar a conclusão.</p></div><div class="report-rail__item"><span>04</span><h3>Os limites</h3><p>O que a ferramenta ainda não consegue determinar.</p></div><button class="button button--blue button--full" type="button" data-app-nav="new">Fazer outra simulação <svg class="icon"><use href="#ic-arrow-right"/></svg></button></aside></div>
+          </section>
+
+          <section class="app-page" id="page-history" data-page="history" hidden><div class="app-intro app-intro--compact"><span class="eyebrow">03 / SUAS ANÁLISES</span><h1>O que você<br><span class="text-blue">já questionou.</span></h1><p>O histórico abaixo é ilustrativo e não é salvo. Neste protótipo, nada é armazenado em servidor.</p></div><div class="history-content"><div class="history-toolbar"><div class="history-toolbar__title">Histórico de demonstração <span>02 exemplos</span></div><button class="button button--outline button--small" type="button" data-app-nav="new">Nova análise <svg class="icon"><use href="#ic-plus"/></svg></button></div><button type="button" class="history-row" data-history-sample="moon"><div class="history-row__icon"><svg class="icon"><use href="#ic-file"/></svg></div><div class="history-row__main"><strong>A Lua emite luz própria.</strong><span>Texto · Exemplo demonstrativo</span></div><span class="semantic-tag semantic-tag--danger"><span></span> Contradito</span><svg class="icon"><use href="#ic-arrow-up-right"/></svg></button><button type="button" class="history-row" data-history-sample="sun"><div class="history-row__icon"><svg class="icon"><use href="#ic-file"/></svg></div><div class="history-row__main"><strong>O Sol é uma estrela.</strong><span>Texto · Exemplo demonstrativo</span></div><span class="semantic-tag semantic-tag--success"><span></span> Sustentado</span><svg class="icon"><use href="#ic-arrow-up-right"/></svg></button><div class="history-note"><svg class="icon"><use href="#ic-lock"/></svg> Sem conta, banco de dados ou histórico real nesta demonstração.</div></div></section>
+
+          <section class="app-page" id="page-settings" data-page="settings" hidden><div class="app-intro app-intro--compact"><span class="eyebrow">04 / PREFERÊNCIAS</span><h1>Controle é parte<br><span class="text-blue">da experiência.</span></h1><p>Uma prévia das opções de privacidade e acessibilidade planejadas para a plataforma.</p></div><div class="settings-panel"><div class="settings-panel__heading"><svg class="icon"><use href="#ic-lock"/></svg><div><h2>Privacidade em primeiro lugar</h2><p>As preferências abaixo são demonstrativas e não são persistidas.</p></div></div><div class="settings-row"><div><strong>Confirmação antes do envio</strong><p>Revise sempre o conteúdo selecionado para análise.</p></div><span class="setting-fixed">SEMPRE ATIVA</span></div><div class="settings-row"><div><strong>Análise automática em segundo plano</strong><p>O AutenticAI foi planejado para funcionar sob demanda.</p></div><span class="setting-fixed">DESATIVADA</span></div><div class="settings-row"><div><strong>Reduzir animações</strong><p>Prévia de uma preferência de acessibilidade local.</p></div><button type="button" id="reduced-motion-toggle" role="switch" aria-checked="false" aria-label="Reduzir animações" class="switch"><span></span></button></div><div class="settings-row"><div><strong>Excluir registros</strong><p>Nenhum registro pessoal foi criado neste protótipo.</p></div><button type="button" class="button button--outline button--small" id="clear-demo-button">Saiba mais</button></div></div></section>
+        </main>
+        <footer class="app-footer">AutenticAI — Protótipo visual em HTML, CSS e JavaScript. <span>Nenhum resultado representa uma verificação real.</span></footer>
+      </div>
+    </div>
+    <nav class="mobile-app-nav" aria-label="Navegação mobile"><button type="button" data-app-nav="overview"><svg class="icon"><use href="#ic-grid"/></svg> Início</button><button type="button" data-app-nav="new"><svg class="icon"><use href="#ic-plus"/></svg> Analisar</button><button type="button" data-app-nav="history"><svg class="icon"><use href="#ic-clock"/></svg> Histórico</button><button type="button" data-app-nav="settings"><svg class="icon"><use href="#ic-settings"/></svg> Perfil</button></nav>
+  </div>
+
+  <dialog id="preview-dialog" class="preview-dialog" aria-labelledby="preview-title"><div class="dialog-header"><span class="eyebrow">02 / REVISÃO ANTES DO ENVIO</span><button type="button" class="dialog-close" id="close-preview" aria-label="Fechar prévia"><svg class="icon"><use href="#ic-x"/></svg></button></div><h2 id="preview-title">Confira antes<br>de continuar.</h2><p>Em um sistema real, você autorizaria o envio do conteúdo abaixo. Aqui a confirmação abre somente um relatório demonstrativo.</p><div class="preview-content"><span class="report-label" id="preview-type-label">TEXTO SELECIONADO</span><p id="preview-content-text">A Lua emite luz própria.</p><div id="preview-image-holder" hidden><img id="preview-image" alt="Prévia da imagem selecionada"></div></div><div class="preview-privacy"><svg class="icon"><use href="#ic-lock"/></svg><span>Nenhum conteúdo será enviado para servidores.</span></div><div class="dialog-actions"><button class="button button--outline" type="button" id="cancel-preview">Voltar e editar</button><button class="button button--blue" type="button" id="confirm-preview">Ver relatório de exemplo <svg class="icon"><use href="#ic-arrow-right"/></svg></button></div></dialog>
+  <div class="processing-mask" id="processing-mask" hidden role="status" aria-live="polite"><div class="processing-card"><div class="processing-visual"><span></span><span></span><span></span></div><span class="eyebrow">SIMULAÇÃO DE INTERFACE</span><h2>Organizando a<br>informação.</h2><p>Esta transição é apenas uma demonstração visual. Nenhuma análise está sendo feita.</p></div></div>
+  <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
