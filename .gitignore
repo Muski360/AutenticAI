@@ -1,0 +1,12 @@
+# Generated archives and packaged builds
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.bz2
+*.xz
+*.7z
+*.rar
+output/
+.playwright-cli/

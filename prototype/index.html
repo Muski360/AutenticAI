@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#FFFFFF">
   <meta name="description" content="AutenticAI — Uma maneira mais clara de questionar informações e consultar evidências. Protótipo conceitual.">
   <title>AutenticAI — Da dúvida à evidência</title>
+  <link rel="icon" href="../assets/autenticai-symbol-black.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -44,74 +45,62 @@
   <div id="landing-view">
     <header class="site-header" id="site-header">
       <div class="site-header__inner frame">
-        <button type="button" class="brand brand-button" data-go-home aria-label="AutenticAI — ir ao início">Autentic<span>AI</span><span class="brand-period">.</span></button>
+        <button type="button" class="brand brand-button" data-go-home aria-label="AutenticAI — ir ao início"><img class="brand-image" src="../assets/autenticai-lockup-horizontal-black.png" alt="AutenticAI" width="190" height="42"></button>
         <nav class="desktop-nav" aria-label="Navegação principal">
           <a href="#metodo">O método</a>
           <a href="#plataformas">Onde usar</a>
           <a href="#compromisso">Nosso compromisso</a>
         </nav>
         <div class="header-actions">
-          <span class="header-status"><span class="live-pip"></span> PROJETO EM DESENVOLVIMENTO</span>
+          <span class="header-status"><span class="live-pip"></span> PROTÓTIPO CONCEITUAL</span>
           <button class="button button--dark button--small" type="button" data-open-app="new">Explorar protótipo <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button>
         </div>
       </div>
     </header>
 
     <main id="main-content">
-      <section class="hero frame" aria-labelledby="hero-heading">
-        <div class="hero-eyebrow eyebrow"><span class="line-chip">01 / 04</span> O NOVO JEITO DE QUESTIONAR</div>
-        <div class="hero-grid">
+      <section class="hero" aria-labelledby="hero-heading">
+        <div class="hero-grid frame">
           <div class="hero-copy">
-            <h1 id="hero-heading">Antes de<br><span class="headline-special">acreditar<span class="headline-dot">,</span></span><br><span class="headline-outline">investigue.</span></h1>
-            <p class="hero-intro">Informações circulam rápido. A compreensão precisa ir mais fundo. Conheça a plataforma que coloca evidências e contexto ao alcance de um clique.</p>
+            <div class="hero-eyebrow eyebrow"><span class="tiny-square"></span> UM NOVO OLHAR SOBRE A INFORMAÇÃO</div>
+            <h1 id="hero-heading">Antes de<br>compartilhar,<br><span class="headline-emphasis">questione.</span></h1>
+            <p class="hero-intro">Entre uma informação e a sua confiança, existe um caminho. Explore as evidências. Entenda o contexto. Forme sua opinião.</p>
             <div class="hero-buttons">
-              <button type="button" class="button button--blue button--large" data-open-app="new">Fazer uma análise <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button>
-              <a href="#metodo" class="text-link">Entenda como funciona <svg class="icon"><use href="#ic-arrow-right"/></svg></a>
+              <button type="button" class="button button--blue button--large" data-open-app="new">Explorar protótipo <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button>
+              <a href="#metodo" class="text-link">Conheça a ideia <svg class="icon"><use href="#ic-arrow-right"/></svg></a>
             </div>
-            <div class="hero-footnote"><span class="hairline-dot"></span><span>Uma experiência mais consciente com o que você lê.</span></div>
+            <div class="hero-footnote"><svg class="icon"><use href="#ic-eye"/></svg><span>Uma experiência visual. Sem análises reais.</span></div>
           </div>
 
-          <div class="hero-art" aria-label="Demonstração ilustrativa de uma afirmação organizada em contexto e evidências">
-            <div class="hero-art__topline"><span>VISUALIZAÇÃO / 001</span><span>EXEMPLO ILUSTRATIVO <span class="status-glow"></span></span></div>
-            <div class="evidence-canvas" id="evidence-canvas">
-              <div class="evidence-glow" aria-hidden="true"></div>
-              <div class="evidence-number" aria-hidden="true">?</div>
-              <div class="evidence-input">
-                <span class="evidence-label">01 — A AFIRMAÇÃO</span>
-                <p>“A Lua emite<br>luz própria.”</p>
-                <span class="evidence-input__token"><span class="token-dot"></span> Prévia explicativa</span>
-              </div>
-              <svg class="evidence-lines" viewBox="0 0 470 460" preserveAspectRatio="none" aria-hidden="true">
-                <path d="M237 178 V228 Q237 240 249 240 H322 Q334 240 334 252 V278" class="pipe-base" />
-                <path d="M237 178 V228 Q237 240 249 240 H322 Q334 240 334 252 V278" class="pipe-active" />
-                <path d="M237 178 V228 Q237 240 225 240 H133 Q121 240 121 252 V278" class="pipe-base" />
-                <path d="M237 178 V228 Q237 240 225 240 H133 Q121 240 121 252 V278" class="pipe-active pipe-active--delay" />
-                <circle cx="237" cy="240" r="6" class="pipe-hub" />
-              </svg>
-              <div class="evidence-branches">
-                <div class="evidence-node evidence-node--left"><span class="evidence-label">02 — O CONTEXTO</span><span class="evidence-node__big">Luz solar</span><span class="evidence-node__small">Reflexão na superfície</span></div>
-                <div class="evidence-node evidence-node--right"><span class="evidence-label">03 — A EVIDÊNCIA</span><span class="evidence-node__big"><span class="mini-indicator mini-indicator--red"></span> Contradito</span><span class="evidence-node__small">Com base em referências</span></div>
-              </div>
-              <div class="evidence-canvas__bottom"><span>DA DÚVIDA À EVIDÊNCIA</span><span>↗ 001</span></div>
+          <figure class="investigation" aria-label="Exemplo ilustrativo: a afirmação de que a Lua emite luz própria é contradita; sua superfície reflete a luz solar.">
+            <div class="investigation-caption"><span>DA DÚVIDA À EVIDÊNCIA</span><span>FIG. 01 <svg class="icon"><use href="#ic-arrow-up-right"/></svg></span></div>
+            <div class="investigation-canvas" id="evidence-canvas">
+              <div class="investigation-orbits" aria-hidden="true"><i></i><i></i><i></i><span class="orbit-point orbit-point--one"></span><span class="orbit-point orbit-point--two"></span></div>
+              <svg class="investigation-path" viewBox="0 0 600 550" preserveAspectRatio="none" aria-hidden="true"><path d="M170 140H245Q270 140 270 165V270Q270 290 290 290H340Q365 290 365 315V390H430"/><circle cx="170" cy="140" r="4"/><circle cx="430" cy="390" r="4"/></svg>
+              <div class="investigation-core" aria-hidden="true"><img src="../assets/autenticai-symbol-white-cyan.png" alt="" width="1254" height="1254" fetchpriority="high"></div>
+              <div class="claim-note"><span class="note-label"><span>01</span> A AFIRMAÇÃO</span><p>“A Lua emite<br>luz própria.”</p><span class="note-type"><svg class="icon"><use href="#ic-file"/></svg> Algo para questionar</span></div>
+              <div class="context-note"><span class="context-marker" aria-hidden="true">+</span><span>02 / O CONTEXTO</span><strong>Luz solar refletida</strong></div>
+              <div class="finding-note"><span class="note-label"><span>03</span> A EVIDÊNCIA</span><div class="finding-verdict"><span class="finding-cross" aria-hidden="true">×</span><strong>Contradito</strong><svg class="icon"><use href="#ic-arrow-up-right"/></svg></div><p>A Lua reflete a luz do Sol.<br>Ela não produz luz própria.</p><button type="button" class="finding-link" data-open-app="result">Explorar este exemplo <svg class="icon"><use href="#ic-arrow-right"/></svg></button></div>
+              <span class="investigation-coordinate" aria-hidden="true">+ CONTEXTO, NÃO ACHISMO.</span>
             </div>
-            <div class="hero-art__bottomline"><span>O CONTEÚDO É APENAS UMA DEMONSTRAÇÃO</span><button class="icon-link" type="button" data-open-app="result">Abrir relatório <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div>
-          </div>
+            <figcaption class="investigation-footer"><span><span class="hairline-dot"></span> EXEMPLO ILUSTRATIVO</span><span>Nenhuma consulta real a fontes.</span></figcaption>
+          </figure>
         </div>
-        <div class="hero-bottom"><span>01 — CLAREZA ANTES DE CERTEZA</span><span class="hero-bottom__center">A VERDADE NÃO CABE NUMA PORCENTAGEM.</span><a href="#metodo" aria-label="Role para descobrir mais"><svg class="icon"><use href="#ic-arrow-right"/></svg> DESCUBRA</a></div>
+        <div class="hero-bottom frame"><span>INDEPENDÊNCIA PARA PENSAR. CONTEXTO PARA DECIDIR.</span><a href="#metodo"><svg class="icon"><use href="#ic-arrow-right"/></svg> CONTINUE EXPLORANDO</a></div>
       </section>
 
       <section class="statement-section" aria-labelledby="statement-title">
         <div class="frame statement-wrap">
           <div class="statement-kicker eyebrow"><span class="tiny-square"></span> O PONTO DE PARTIDA</div>
-          <h2 id="statement-title">Nem toda informação<br>vem com <span class="text-blue">contexto.</span></h2>
-          <div class="statement-bottom"><span class="big-number">01<span>/</span>03</span><p>Uma manchete convincente não substitui uma fonte. Nosso papel não é dizer em que acreditar — é tornar mais fácil descobrir o que sustenta cada afirmação.</p></div>
+          <h2 id="statement-title">Informação tem de sobra.<br><span class="text-blue">Contexto faz a diferença.</span></h2>
+          <div class="statement-bottom"><span class="statement-aside">MENOS CONCLUSÕES APRESSADAS.<br>MAIS PERGUNTAS BEM FEITAS.</span><p>Uma manchete convincente não substitui uma fonte. A proposta do AutenticAI é aproximar você do que sustenta cada afirmação.</p></div>
         </div>
       </section>
 
       <section class="method-section" id="metodo" aria-labelledby="method-title">
         <div class="frame method-wrap">
           <div class="method-top"><div class="eyebrow light-eyebrow"><span class="line-chip line-chip--light">02 / 04</span> A EXPERIÊNCIA AUTENTICAI</div><p>Um caminho simples. Sem conclusões apressadas.</p></div>
-          <div class="method-head"><h2 id="method-title">Do ruído<br>à <span>clareza.</span></h2><div class="method-dial" aria-hidden="true"><div class="method-dial__inner">A—AI</div><span class="dial-orbit dial-orbit--1"></span><span class="dial-orbit dial-orbit--2"></span></div></div>
+          <div class="method-head"><h2 id="method-title">Do ruído<br>à <span>clareza.</span></h2><div class="method-dial" aria-hidden="true"><img src="../assets/autenticai-symbol-white-cyan.png" alt="" width="1254" height="1254" loading="lazy"><span class="dial-orbit dial-orbit--1"></span><span class="dial-orbit dial-orbit--2"></span></div></div>
           <div class="method-steps">
             <article class="method-step"><div class="method-step__number">01</div><div class="method-step__content"><h3>Encontre algo que merece uma segunda leitura.</h3><p>Cole um texto, insira um link ou escolha uma imagem. Você tem controle sobre o que será analisado.</p></div><div class="method-step__icon"><svg class="icon"><use href="#ic-plus"/></svg></div></article>
             <article class="method-step"><div class="method-step__number">02</div><div class="method-step__content"><h3>Peça contexto, não um veredito.</h3><p>Revise o material selecionado e solicite uma análise de afirmações, justificativas e fontes.</p></div><div class="method-step__icon"><svg class="icon"><use href="#ic-scan"/></svg></div></article>
@@ -125,7 +114,7 @@
         <div class="product-demo" id="product-demo">
           <div class="product-demo__bar"><div class="fake-window-dots"><i></i><i></i><i></i></div><span>AutenticAI / Prévia de relatório</span><span class="fake-window-right">MODO DEMONSTRAÇÃO</span></div>
           <div class="product-demo__body">
-            <aside class="product-demo__sidebar" aria-hidden="true"><div class="mini-brand">Autentic<span>AI</span>.</div><div class="fake-menu-item fake-menu-item--current"><span class="fake-menu-square"></span> Nova análise</div><div class="fake-menu-item"><span class="fake-menu-square"></span> Histórico</div><div class="fake-menu-bottom">INTERFACE CONCEITUAL<br>VERSÃO 0.1</div></aside>
+            <aside class="product-demo__sidebar" aria-hidden="true"><div class="mini-brand"><img class="brand-image" src="../assets/autenticai-lockup-horizontal-black.png" alt="" width="150" height="34" loading="lazy"></div><div class="fake-menu-item fake-menu-item--current"><span class="fake-menu-square"></span> Nova análise</div><div class="fake-menu-item"><span class="fake-menu-square"></span> Histórico</div><div class="fake-menu-bottom">INTERFACE CONCEITUAL<br>VERSÃO 0.2</div></aside>
             <div class="product-demo__main">
               <div class="demo-heading"><span class="demo-heading__kicker">RELATÓRIO #EXEMPLO-001</span><span class="demo-heading__dot">● MODELO VISUAL</span></div>
               <h3>A informação, com mais contexto.</h3>
@@ -151,14 +140,14 @@
 
       <section class="closing-section"><div class="frame closing-inner"><div class="closing-watermark" aria-hidden="true">?</div><span class="eyebrow light-eyebrow">UMA NOVA FORMA DE OLHAR</span><h2>A próxima<br>pergunta pode<br><span>mudar tudo.</span></h2><div class="closing-bottom"><p>Questione o que recebe.<br>Confira as evidências.<br>Decida com mais informação.</p><button class="button button--white button--large" type="button" data-open-app="new">Conhecer o protótipo <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div></div></section>
     </main>
-    <footer class="site-footer frame"><div class="site-footer__main"><span class="footer-logo">Autentic<span>AI</span>.</span><span>Mais clareza. Menos ruído.</span><a href="#main-content">Voltar ao topo ↑</a></div><div class="site-footer__bottom"><span>© 2026 AutenticAI — PROJETO EM PLANEJAMENTO</span><span>Protótipo visual. Nenhuma verificação real é realizada.</span><span>DESIGN CONCEPT / V.01</span></div></footer>
+    <footer class="site-footer frame"><div class="site-footer__main"><img class="brand-image footer-logo" src="../assets/autenticai-lockup-horizontal-black.png" alt="AutenticAI" width="220" height="48" loading="lazy"><span>Mais clareza. Menos ruído.</span><a href="#main-content">Voltar ao topo ↑</a></div><div class="site-footer__bottom"><span>© 2026 AutenticAI — PROJETO EM PLANEJAMENTO</span><span>Protótipo visual. Nenhuma verificação real é realizada.</span><span>CONCEITO / V.02</span></div></footer>
   </div>
 
   <!-- ========= FRONT-END APPLICATION PROTOTYPE ========= -->
   <div id="app-view" hidden>
     <div class="app-shell">
       <aside class="app-sidebar" aria-label="Navegação do protótipo">
-        <div class="sidebar-top"><button type="button" class="brand brand-button" data-go-home>Autentic<span>AI</span><span class="brand-period">.</span></button><span class="sidebar-top__caption">WORKSPACE / DEMO</span></div>
+        <div class="sidebar-top"><button type="button" class="brand brand-button" data-go-home aria-label="AutenticAI — voltar ao site"><img class="brand-image" src="../assets/autenticai-lockup-horizontal-black.png" alt="AutenticAI" width="190" height="42"></button><span class="sidebar-top__caption">SEU ESPAÇO DE INVESTIGAÇÃO</span></div>
         <div class="sidebar-section-label">ESPAÇO DE ANÁLISE</div>
         <nav class="sidebar-nav" aria-label="Áreas do aplicativo">
           <button type="button" class="sidebar-link" data-app-nav="overview"><svg class="icon"><use href="#ic-grid"/></svg> Visão geral</button>
@@ -171,7 +160,7 @@
         <div class="sidebar-bottom"><div class="sidebar-notice"><span class="sidebar-notice__dot"></span> MODO CONCEITUAL <p>Esta interface simula interações. Nenhum conteúdo é enviado ou analisado.</p></div><button type="button" class="sidebar-return" data-go-home><svg class="icon"><use href="#ic-arrow-left"/></svg> Voltar para o site</button></div>
       </aside>
       <div class="app-content">
-        <header class="app-topbar"><div class="app-topbar__left"><button type="button" class="app-mobile-brand" data-go-home>Autentic<span>AI</span>.</button><div class="app-breadcrumb">PLATAFORMA <span>/</span> <span id="app-breadcrumb-current">NOVA ANÁLISE</span></div></div><div class="app-topbar__right"><span class="app-demo-pill"><span></span> PROTÓTIPO</span><button class="avatar-button" type="button" data-app-nav="settings" aria-label="Ver configurações">A</button></div></header>
+        <header class="app-topbar"><div class="app-topbar__left"><button type="button" class="app-mobile-brand" data-go-home aria-label="AutenticAI — voltar ao site"><img class="brand-image" src="../assets/autenticai-lockup-horizontal-black.png" alt="AutenticAI" width="150" height="34"></button><div class="app-breadcrumb">PLATAFORMA <span>/</span> <span id="app-breadcrumb-current">NOVA ANÁLISE</span></div></div><div class="app-topbar__right"><span class="app-demo-pill"><span></span> PROTÓTIPO</span><button class="avatar-button" type="button" data-app-nav="settings" aria-label="Ver configurações">A</button></div></header>
         <main class="app-main" id="app-main">
           <section class="app-page" id="page-overview" data-page="overview" hidden><div class="app-intro"><span class="eyebrow">UM LUGAR PARA QUESTIONAR</span><h1>Mais contexto.<br><span class="text-blue">Menos suposições.</span></h1><p>Acompanhe o caminho entre uma afirmação e as evidências que ajudam a compreendê-la.</p></div><div class="overview-feature"><div><span class="overview-feature__index">01 / COMEÇAR</span><h2>O primeiro passo<br>é perguntar.</h2><p>Selecione um conteúdo, confira a prévia e descubra como seria um relatório explicativo.</p><button class="button button--white" type="button" data-app-nav="new">Nova análise <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div><div class="overview-feature__art" aria-hidden="true"><span>?</span><span>!</span><span>↗</span></div></div><div class="overview-lower"><div><span class="eyebrow">UM RELATÓRIO TRANSPARENTE</span><h3>Nenhuma classificação sem explicação.</h3></div><button type="button" class="overview-report-link" data-app-nav="result">Explorar relatório ilustrativo <svg class="icon"><use href="#ic-arrow-up-right"/></svg></button></div></section>
 
@@ -202,10 +191,10 @@
 
           <section class="app-page" id="page-settings" data-page="settings" hidden><div class="app-intro app-intro--compact"><span class="eyebrow">04 / PREFERÊNCIAS</span><h1>Controle é parte<br><span class="text-blue">da experiência.</span></h1><p>Uma prévia das opções de privacidade e acessibilidade planejadas para a plataforma.</p></div><div class="settings-panel"><div class="settings-panel__heading"><svg class="icon"><use href="#ic-lock"/></svg><div><h2>Privacidade em primeiro lugar</h2><p>As preferências abaixo são demonstrativas e não são persistidas.</p></div></div><div class="settings-row"><div><strong>Confirmação antes do envio</strong><p>Revise sempre o conteúdo selecionado para análise.</p></div><span class="setting-fixed">SEMPRE ATIVA</span></div><div class="settings-row"><div><strong>Análise automática em segundo plano</strong><p>O AutenticAI foi planejado para funcionar sob demanda.</p></div><span class="setting-fixed">DESATIVADA</span></div><div class="settings-row"><div><strong>Reduzir animações</strong><p>Prévia de uma preferência de acessibilidade local.</p></div><button type="button" id="reduced-motion-toggle" role="switch" aria-checked="false" aria-label="Reduzir animações" class="switch"><span></span></button></div><div class="settings-row"><div><strong>Excluir registros</strong><p>Nenhum registro pessoal foi criado neste protótipo.</p></div><button type="button" class="button button--outline button--small" id="clear-demo-button">Saiba mais</button></div></div></section>
         </main>
-        <footer class="app-footer">AutenticAI — Protótipo visual em HTML, CSS e JavaScript. <span>Nenhum resultado representa uma verificação real.</span></footer>
+        <footer class="app-footer">AutenticAI · Uma experiência para explorar. <span>Nenhum resultado representa uma verificação real.</span></footer>
       </div>
     </div>
-    <nav class="mobile-app-nav" aria-label="Navegação mobile"><button type="button" data-app-nav="overview"><svg class="icon"><use href="#ic-grid"/></svg> Início</button><button type="button" data-app-nav="new"><svg class="icon"><use href="#ic-plus"/></svg> Analisar</button><button type="button" data-app-nav="history"><svg class="icon"><use href="#ic-clock"/></svg> Histórico</button><button type="button" data-app-nav="settings"><svg class="icon"><use href="#ic-settings"/></svg> Perfil</button></nav>
+    <nav class="mobile-app-nav" aria-label="Navegação mobile"><button type="button" data-app-nav="overview"><svg class="icon"><use href="#ic-grid"/></svg> Início</button><button type="button" data-app-nav="new"><svg class="icon"><use href="#ic-plus"/></svg> Analisar</button><button type="button" data-app-nav="history"><svg class="icon"><use href="#ic-clock"/></svg> Histórico</button><button type="button" data-app-nav="settings"><svg class="icon"><use href="#ic-settings"/></svg> Ajustes</button></nav>
   </div>
 
   <dialog id="preview-dialog" class="preview-dialog" aria-labelledby="preview-title"><div class="dialog-header"><span class="eyebrow">02 / REVISÃO ANTES DO ENVIO</span><button type="button" class="dialog-close" id="close-preview" aria-label="Fechar prévia"><svg class="icon"><use href="#ic-x"/></svg></button></div><h2 id="preview-title">Confira antes<br>de continuar.</h2><p>Em um sistema real, você autorizaria o envio do conteúdo abaixo. Aqui a confirmação abre somente um relatório demonstrativo.</p><div class="preview-content"><span class="report-label" id="preview-type-label">TEXTO SELECIONADO</span><p id="preview-content-text">A Lua emite luz própria.</p><div id="preview-image-holder" hidden><img id="preview-image" alt="Prévia da imagem selecionada"></div></div><div class="preview-privacy"><svg class="icon"><use href="#ic-lock"/></svg><span>Nenhum conteúdo será enviado para servidores.</span></div><div class="dialog-actions"><button class="button button--outline" type="button" id="cancel-preview">Voltar e editar</button><button class="button button--blue" type="button" id="confirm-preview">Ver relatório de exemplo <svg class="icon"><use href="#ic-arrow-right"/></svg></button></div></dialog>

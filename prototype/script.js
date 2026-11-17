@@ -8,6 +8,7 @@
 
   const landing = document.getElementById('landing-view');
   const app = document.getElementById('app-view');
+  const skipLink = document.querySelector('.skip-link');
   const pages = [...document.querySelectorAll('.app-page')];
   const navButtons = [...document.querySelectorAll('[data-app-nav]')];
   const breadcrumb = document.getElementById('app-breadcrumb-current');
@@ -26,6 +27,14 @@
   let pending = null;
   let imageObjectURL = null;
   let processingTimer = null;
+
+  document.querySelectorAll('h1').forEach(heading => { heading.tabIndex = -1; });
+  skipLink.addEventListener('click', event => {
+    event.preventDefault();
+    const main = document.querySelector(skipLink.getAttribute('href'));
+    main.tabIndex = -1;
+    main.focus();
+  });
 
   const samples = {
     moon: {
@@ -70,18 +79,23 @@
       else button.removeAttribute('aria-current');
     }
     breadcrumb.textContent = viewTitles[page];
+    skipLink.setAttribute('href', '#app-main');
     document.title = `${viewTitles[page].toLowerCase().replace(/^./, c => c.toUpperCase())} — AutenticAI`;
     if (updateURL && location.hash !== '#app/' + page) history.pushState(null, '', '#app/' + page);
     scrollTop();
+    app.querySelector('.app-page:not([hidden]) h1').focus({ preventScroll: true });
   }
 
   function goHome(updateURL = true) {
+    const returningFromApp = !app.hidden;
     landing.hidden = false;
     app.hidden = true;
     document.body.classList.remove('app-active');
+    skipLink.setAttribute('href', '#main-content');
     document.title = 'AutenticAI — Da dúvida à evidência';
     if (updateURL && location.hash.startsWith('#app/')) history.pushState(null, '', location.pathname + location.search);
     scrollTop();
+    if (returningFromApp || updateURL) landing.querySelector('h1').focus({ preventScroll: true });
     updateScrollMeter();
   }
 
@@ -289,22 +303,6 @@
   document.getElementById('clear-demo-button').addEventListener('click', () => {
     notify('Não há dados de conta ou relatórios pessoais para excluir: tudo é demonstrativo.');
   });
-
-  // The product artwork can gently react to pointer position, with no impact on reading order.
-  const canvas = document.getElementById('evidence-canvas');
-  if (window.matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)').matches) {
-    canvas.addEventListener('pointermove', event => {
-      const rect = canvas.getBoundingClientRect();
-      const shiftX = ((event.clientX - rect.left) / rect.width - .5) * 12;
-      const shiftY = ((event.clientY - rect.top) / rect.height - .5) * 12;
-      canvas.style.setProperty('--pointer-x', `${shiftX.toFixed(1)}px`);
-      canvas.style.setProperty('--pointer-y', `${shiftY.toFixed(1)}px`);
-    });
-    canvas.addEventListener('pointerleave', () => {
-      canvas.style.setProperty('--pointer-x', '0px');
-      canvas.style.setProperty('--pointer-y', '0px');
-    });
-  }
 
   // Demo paths use browser history but no network requests.
   setReport(samples.moon);

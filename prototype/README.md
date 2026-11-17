@@ -1,49 +1,55 @@
 # AutenticAI — Protótipo visual
 
-Protótipo independente em **HTML, CSS e JavaScript puro**, inspirado nas diretrizes de direção de arte do projeto `awwwards-skill` e na identidade visual de `docs/IDENTIDADE_VISUAL.md` do AutenticAI.
+Landing page e aplicação demonstrativa em **HTML, CSS e JavaScript puro**, sem build ou dependências de execução.
 
 ## Executar
 
-Abra `index.html` em um navegador moderno. Não é preciso instalar dependências, executar um servidor ou configurar variáveis de ambiente.
+Abra `prototype/index.html` em um navegador moderno, mantendo `prototype/` e `assets/` como pastas irmãs.
 
-Para testar rotas também é possível usar um servidor local opcional:
+Para servir o projeto localmente, execute **na raiz do repositório**:
 
 ```bash
-
+python -m http.server 8080
 ```
 
-Depois, acesse `http://localhost:8080`.
+Acesse **http://localhost:8080/prototype/**. Não é preciso instalar pacotes ou configurar variáveis de ambiente.
 
-## Conteúdo
+## Explorar
 
-- `index.html`: landing page, mockups da plataforma, área interna, diálogos e elementos de interface.
-- `styles.css`: identidade visual, composição editorial, responsividade, animações e estados.
-- `script.js`: navegação de demonstração, abas, validações locais, prévia, simulação de relatório e feedbacks.
+1. Percorra a landing: proposta, método, relatório ilustrativo, plataformas e privacidade.
+2. Abra a aplicação e visite suas cinco telas: visão geral, nova análise, relatório, histórico e configurações.
+3. Alterne entre texto, link e imagem; revise o conteúdo antes de abrir o relatório demonstrativo.
+4. Use os exemplos da Lua e do Sol para explorar classificações didáticas. Outras entradas permanecem explicitamente sem verificação.
+5. Navegue por teclado: há link para pular ao conteúdo, foco no título ao trocar de tela e abas com setas. O movimento reduzido respeita a preferência do sistema e a opção local.
 
-## O que explorar
+## Direção visual
 
-1. Role a **landing page**: manifesto, método, visualização de relatório, plataformas e princípios de privacidade.
-2. Clique em **Explorar protótipo** ou **Fazer uma análise** para visitar a aplicação simulada.
-3. Alterne entre texto/link/imagem, insira conteúdo e clique em **Revisar conteúdo**.
-4. Confira a prévia; em seguida, clique em **Ver relatório de exemplo**.
-5. Use os exemplos "A Lua emite luz própria" e "O Sol é uma estrela" para visualizar duas classificações didáticas. Para qualquer outra entrada, a interface apresenta um relatório explicitamente não verificado.
-6. Explore **Histórico**, **Configurações** e a navegação mobile.
+Composição editorial branca, azul profundo e ciano, com hierarquia tipográfica ampla e divisores discretos. Os lockups e o símbolo são os PNGs reais de `../assets/`; o diagrama organiza **afirmação → contexto → evidências**.
 
-## Limitações intencionais
+Foi considerada uma abertura escura e imersiva. A composição branca foi escolhida para favorecer leitura e neutralidade, com o símbolo ciano como ponto de identidade na visualização.
 
-**Este protótipo não faz fact-checking**, detecção de IA, OCR, captura de tela, requisições a serviços externos, login, upload de imagens, armazenamento, rastreamento ou qualquer tratamento remoto de dados do usuário. Uma imagem selecionada só tem prévia local no navegador. Os relatórios e fontes são exemplos demonstrativos, identificados como tais em toda a interface.
+- [Are.na](https://www.are.na/): inspeção visual real em desktop; referência para espaço em branco, hierarquia e agrupamento por contexto.
+- [AFP — How we work](https://factcheck.afp.com/How-we-work): leitura da metodologia; referência para separar afirmação, evidência, fonte e limites.
 
-O Google Fonts é opcional e usado exclusivamente para carregar a família Inter; a interface continua funcional com `system-ui` se a fonte externa estiver indisponível.
+A pesquisa no Awwwards ficou indisponível por timeout; não houve inspeção visual desse site. A skill `awwwards-skill` orientou o processo de direção e revisão.
 
-## Regras de identidade respeitadas
+## Arquivos e limites
 
-- Marca textual AutenticAI (sem inventar símbolo oficial)
-- Inter e hierarquia tipográfica responsiva
-- `#FFFFFF`, `#F2F6FC`, `#1557B0`, `#123C70`, `#172B4D`, `#52647A`, `#D5DFEB`
-- Verde, vermelho e amarelo reservados a estados semânticos
-- Foco visível, controles acessíveis e alternativas a movimento
-- Fluxo de confirmação antes de análise; separação entre fatos e detecção de IA
+- `index.html`: landing, cinco telas internas, mockups e diálogo de revisão.
+- `styles.css`: composição, identidade, estados e layouts responsivos.
+- `script.js`: navegação, abas, prévia local e relatórios demonstrativos.
 
-## Próxima etapa
+**Não há backend, fact-checking, detecção real de IA, conta ou upload remoto.** Imagens selecionadas ficam apenas na prévia local; relatórios, histórico e fontes são exemplos. Nenhuma informação é armazenada ou enviada para análise.
 
-O design pode servir de base para implementar a Web com React/TypeScript e o Android com Flutter, preservando componentes e tokens enquanto o backend ainda é construído.
+O Google Fonts carrega Inter opcionalmente; a interface usa a fonte do sistema quando o serviço está indisponível.
+
+## Verificação
+
+Com o servidor local ativo e o Node.js instalado, execute na raiz:
+
+```powershell
+npx --yes --package @playwright/cli playwright-cli -s=autenticai open http://localhost:8080/prototype/ --browser chrome
+npx --yes --package @playwright/cli playwright-cli -s=autenticai run-code --filename prototype/checks/smoke.js
+```
+
+O smoke check verifica 24 combinações de tela e largura (320, 390, 768 e 1440 px), imagens, foco, abas por teclado, diálogo, entrada sem verificação, movimento reduzido e leitura sem JavaScript/fonte externa. Não substitui testes em dispositivos reais.
