@@ -12,7 +12,7 @@
 
 O AutenticAI é um projeto acadêmico do SENAI para ajudar pessoas a investigar informações. O usuário solicita a análise, revisa o conteúdo e recebe justificativas e fontes disponíveis. Os indícios de conteúdo gerado por IA são separados da verificação factual, sem percentual ou certeza de autoria.
 
-O código existente em `prototype/` é uma demonstração em HTML, CSS e JavaScript, com resultados fictícios. O produto planejado usa Next.js, extensão Chrome, Flutter para Android, Cloudflare Workers, PostgreSQL e autenticação Google no Supabase, além do Gemini 2.5 Flash-Lite com pesquisa. Somente o nível Light está previsto para implementação; Médio, Alto e Ultra são conceituais.
+O protótipo em `prototype/` é uma demonstração em HTML, CSS e JavaScript. A pasta `system/backend/` contém a API do Cloudflare Workers, as migrações PostgreSQL e a configuração do Supabase e do Gemini 3.5 Flash com pesquisa. Os clientes planejados usam Next.js, extensão Chrome e Flutter para Android. A API oferece o nível Light. Médio, Alto e Ultra são conceituais.
 
 No Android, sobreposição e captura de tela exigem autorizações distintas. O usuário inicia a captura e confirma o envio; respeite as restrições de telas protegidas. Mantenha segredos no servidor, restrinja o histórico ao usuário e não armazene o print original permanentemente.
 
@@ -29,6 +29,8 @@ Ao mudar uma decisão de produto ou arquitetura, atualize os documentos relacion
 ## Execução e verificação
 
 Para visualizar o protótipo, execute `python -m http.server 8080` na raiz e abra `http://localhost:8080/prototype/`. Para mudanças na interface, verifique os fluxos afetados, responsividade, teclado e erros de console; use o smoke test e as instruções de `prototype/README.md` quando aplicável. Para mudanças apenas em Markdown, confira links internos, coerência e `git diff --check`.
+
+Para mudanças na API, execute `npm test` e `npm run check` em `system/backend/`. A configuração local está no [guia do backend](system/backend/README.md).
 
 ## Skills e ferramentas
 

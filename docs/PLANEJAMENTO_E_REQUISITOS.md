@@ -13,7 +13,7 @@ Verificar informações encontradas na internet pode exigir tempo e consultas a 
 | RF03 | Solicitar a análise do texto da página ativa pela extensão Chrome. |
 | RF04 | Usar um botão flutuante no Android para iniciar a captura, após as permissões necessárias. |
 | RF05 | Revisar e confirmar o conteúdo antes de enviá-lo para análise. |
-| RF06 | Usar o Gemini 2.5 Flash-Lite com pesquisa para analisar afirmações e apresentar justificativas e fontes disponíveis. |
+| RF06 | Analisar afirmações e apresentar justificativas e fontes com a pesquisa do Gemini configurado como 3.5 Flash. |
 | RF07 | Apresentar separadamente eventuais indícios de conteúdo gerado por IA, sem porcentagem ou certeza de autoria. |
 | RF08 | Consultar e excluir as próprias análises no histórico. |
 | RF09 | Informar processamento, falha, falta de evidências e permissões negadas. |
@@ -38,7 +38,7 @@ Quando possível, classificar afirmações como **sustentadas, contraditas, com 
 | Extensão | Chrome Manifest V3 |
 | Android | Flutter e integração nativa para sobreposição e captura |
 | Dados e login | PostgreSQL e autenticação Google no Supabase |
-| IA | Gemini 2.5 Flash-Lite com pesquisa Google |
+| IA | Gemini 3.5 Flash com pesquisa Google |
 
 A ordem de desenvolvimento será: **estrutura e login → análise web e histórico → extensão Chrome → Android → testes da entrega**. Apenas o nível **Light** será implementado. Médio, Alto e Ultra são possibilidades futuras, sem recursos ou modelos definidos.
 

@@ -2,14 +2,14 @@
 
 ## Objetivo e escopo
 
-O AutenticAI é um projeto acadêmico para testar a análise de informações em três plataformas. As funcionalidades abaixo ainda estão planejadas.
+O AutenticAI é um projeto acadêmico de análise de informações. A API e o esquema do banco estão em `system/backend/`. A integração das três interfaces está planejada. [Guia do backend](../system/backend/README.md)
 
 ```mermaid
 flowchart LR
     W[Web: Next.js] --> API[API: Cloudflare Worker]
     C[Extensão Chrome] --> API
     A[Android: Flutter] --> API
-    API --> G[Gemini 2.5 Flash-Lite e pesquisa Google]
+    API --> G[Gemini 3.5 Flash e pesquisa Google]
     API --> DB[(PostgreSQL no Supabase)]
     W --> AUTH[Supabase Auth: Google]
     C --> AUTH
@@ -23,7 +23,7 @@ O Next.js também será hospedado na infraestrutura Cloudflare. O Worker recebe 
 
 1. O usuário entra com sua conta Google e seleciona o conteúdo na web, na extensão ou no Android.
 2. O cliente mostra uma prévia e pede confirmação antes do envio. Na web, aceita texto ou imagem; a extensão extrai texto da página ativa; no Android, é enviado o print autorizado.
-3. O Worker valida a sessão e a entrada e envia o conteúdo ao Gemini 2.5 Flash-Lite com pesquisa Google habilitada. A resposta deve usar as referências de pesquisa retornadas pelo serviço, quando disponíveis, sem inventar fontes.
+3. O Worker valida a sessão e a entrada e envia o conteúdo à Gemini API com pesquisa Google habilitada. A configuração usa `gemini-3.5-flash`, que o Google redireciona para o 3.6 Flash. As fontes vêm dos metadados da pesquisa. [Notas da Gemini API](https://aistudio.google.com/docs/changelog#10-08-2026)
 4. O resultado apresenta afirmações, justificativas e fontes disponíveis. Se a pesquisa falhar ou não houver evidências suficientes, informa a limitação ou apresenta resultado inconclusivo.
 5. O histórico salva o texto enviado ou extraído da imagem, o resultado e as fontes, vinculados ao usuário. O print original não é armazenado permanentemente. Cada usuário pode consultar e excluir seus próprios registros.
 
@@ -48,7 +48,7 @@ A verificação factual e os indícios de conteúdo gerado por IA aparecem em se
 
 | Nível | Situação | Ideia para profundidade, tempo e custo |
 |---|---|---|
-| **Light (Leve)** | Único nível do projeto; Gemini 2.5 Flash-Lite | Análise inicial com pesquisa de fontes. |
+| **Light (Leve)** | Nível da API, configurado com Gemini 3.5 Flash | Análise inicial com pesquisa de fontes. |
 | **Médio** | Visão futura | Investigação mais ampla que a Light. |
 | **Alto** | Visão futura | Investigação mais aprofundada, com maior tempo e custo. |
 | **Ultra** | Visão futura | Investigação mais extensa, com maior tempo e custo previstos. |

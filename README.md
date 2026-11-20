@@ -2,7 +2,7 @@
 
 O AutenticAI é um projeto acadêmico do SENAI que ajuda a investigar informações encontradas na internet. O usuário envia um conteúdo, e a IA pesquisa fontes e apresenta uma análise com explicações e limitações.
 
-**Situação:** projeto em planejamento. Existe um [protótipo visual](prototype/README.md), mas ainda não há análise real, autenticação ou backend implementados.
+**Situação:** o [protótipo visual](prototype/README.md) é demonstrativo. A API e a migração do banco estão em `system/backend/`. Consulte o [guia do backend](system/backend/README.md) para configurar e executar a API.
 
 ## Como será usado
 
@@ -20,11 +20,11 @@ Antes de enviar, o usuário poderá revisar o conteúdo. A análise mostrará af
 - **Mobile:** Flutter, com integração nativa Android para a captura de tela.
 - **Extensão:** Chrome, com Manifest V3.
 - **Conta e dados:** login Google pelo Supabase Auth e PostgreSQL no Supabase.
-- **IA:** Gemini 2.5 Flash-Lite, com pesquisa de fontes.
+- **IA:** Gemini 3.5 Flash, com pesquisa de fontes.
 
 ## Níveis de análise
 
-O projeto implementará somente o **Light (Leve)**, com Gemini 2.5 Flash-Lite. Em um produto futuro, os níveis **Médio, Alto e Ultra** poderiam oferecer investigações progressivamente mais profundas, demoradas e caras. Eles são apenas uma visão conceitual, sem implementação ou modelos definidos.
+O projeto oferece o nível **Light (Leve)**, configurado com Gemini 3.5 Flash. A Google redireciona esse identificador para o Gemini 3.6 Flash. Em um produto futuro, os níveis **Médio, Alto e Ultra** poderiam oferecer investigações progressivamente mais profundas, demoradas e caras. [Notas da Gemini API](https://aistudio.google.com/docs/changelog#10-08-2026)
 
 ## Documentação
 

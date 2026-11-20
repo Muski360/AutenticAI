@@ -10,3 +10,9 @@
 *.rar
 output/
 .playwright-cli/
+node_modules/
+.wrangler/
+/system/backend/supabase/.temp/
+.env*
+!.env.example
+.dev.vars*
