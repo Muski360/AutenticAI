@@ -1,5 +1,7 @@
 # AutenticAI — Protótipo visual
 
+> Este protótipo representa uma versão anterior da interface. A opção de link e os exemplos de resultado são demonstrativos e não definem o escopo atual; consulte os [requisitos atualizados](../docs/PLANEJAMENTO_E_REQUISITOS.md).
+
 Landing page e aplicação demonstrativa em **HTML, CSS e JavaScript puro**, sem build ou dependências de execução.
 
 ## Executar
