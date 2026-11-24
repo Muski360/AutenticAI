@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AutenticAI</title>
+    <link rel="stylesheet" href="popup.css">
+    <script defer src="popup.js"></script>
+  </head>
+  <body>
+    <header class="top">
+      <img src="brand.png" alt="AutenticAI">
+      <span class="eyebrow">Chrome</span>
+    </header>
+    <main>
+      <p id="status" role="status"></p>
+      <p id="error" role="alert"></p>
+      <section id="access" class="access" hidden>
+        <div class="orbit" aria-hidden="true"><img src="symbol.png" alt=""></div>
+        <p class="eyebrow marker">Da dúvida à evidência</p>
+        <h1>Antes de compartilhar, <span>questione.</span></h1>
+        <p>Investigue informações da aba ativa e consulte as fontes disponíveis.</p>
+        <button id="login" class="primary">Entrar com Google <span aria-hidden="true">↗</span></button>
+      </section>
+      <div id="workspace" hidden>
+        <div class="workspace-top">
+          <p class="eyebrow marker">Seu espaço de investigação</p>
+          <button id="logout">Sair</button>
+        </div>
+        <section class="panel intake">
+          <h1>O que vamos <span>investigar?</span></h1>
+          <p>Revise o texto da aba ativa antes de confirmar o envio.</p>
+          <button id="read" class="primary">Ler texto da aba <span aria-hidden="true">↗</span></button>
+        </section>
+        <section id="preview" class="panel" hidden>
+          <p class="eyebrow marker">Prévia</p>
+          <h2 tabindex="-1">Revise o texto</h2>
+          <pre id="text" tabindex="0"></pre>
+          <p>Ao confirmar, o texto será enviado ao Gemini para análise.</p>
+          <div class="actions">
+            <button id="cancel">Cancelar</button>
+            <button id="submit" class="primary">Confirmar envio <span aria-hidden="true">↗</span></button>
+          </div>
+        </section>
+        <section id="result" class="panel" hidden>
+          <p class="eyebrow marker">Da dúvida à evidência</p>
+          <h2 tabindex="-1">Resultado</h2>
+          <div id="report"></div>
+        </section>
+        <section class="panel history">
+          <div class="section-heading"><h2>Histórico</h2><button id="history">Abrir histórico</button></div>
+          <div id="records"></div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

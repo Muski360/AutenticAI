@@ -6,10 +6,12 @@ A API recebe texto ou print, analisa o conteúdo com Gemini e guarda o relatóri
 
 Execute os comandos abaixo em `system/backend/`.
 
-1. Crie ou selecione o projeto AutenticAI no Supabase. Rode `npx supabase login` e `npx supabase db push --remote=REF_DO_PROJETO` para aplicar o esquema. [Migração SQL](supabase/migrations/20261119000000_historico.sql)
-2. Configure o provedor Google no Supabase Auth e cadastre a URL de retorno do cliente. [Guia de login Google](https://supabase.com/docs/guides/auth/social-login/auth-google)
+1. Entre com `npx supabase login` e vincule o ambiente com `npx supabase link --project-ref REF_DO_PROJETO`. O projeto remoto AutenticAI já tem o esquema inicial. Para aplicar migrações pendentes ao projeto vinculado, rode `npx supabase db push --remote --dry-run` e depois `npx supabase db push --remote`. [Migração SQL](supabase/migrations/20261119000000_historico.sql)
+2. Configure o provedor Google no Supabase Auth com o ID e o segredo de um cliente OAuth do Google. Cadastre no Google a URL de callback mostrada pelo Supabase e autorize no Supabase a URL de retorno do cliente. [Guia de login Google](https://supabase.com/docs/guides/auth/social-login/auth-google)
 3. Preencha `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` e `GEMINI_API_KEY` em `system/backend/.env`. Em outro checkout, copie `.env.example` primeiro. Ajuste `ALLOWED_ORIGINS` com as origens web e da extensão, separadas por vírgula.
 4. Execute `npm ci` e `npm run dev`. A API local usa `http://localhost:8787`. Rode `npm test` para verificar o fluxo com respostas simuladas e `npm run check` para conferir o pacote do Worker.
+
+Com o Worker local em execução, use `npm run smoke` em outro terminal. O comando verifica saúde, CORS, rejeição de sessão ausente ou inválida e conexão com o Supabase. Ele também informa se o login Google está habilitado. A verificação não cria análises nem chama o Gemini.
 
 O identificador configurado é `gemini-3.5-flash`, que a Google redireciona para o Gemini 3.6 Flash. A pesquisa Google requer acesso para uso pago da API. [Notas da Gemini API](https://aistudio.google.com/docs/changelog#10-08-2026) · [Preços e acesso](https://aistudio.google.com/docs/pricing)
 

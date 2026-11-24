@@ -1,0 +1,14 @@
+{
+  "name": "autenticai-extension",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node --env-file=.env.local build.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.119.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

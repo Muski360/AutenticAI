@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "AutenticAI",
+  "description": "Projeto acadêmico do SENAI para investigar informações.",
+  "version": "0.1.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsVefSxaxRbB7FUIyqyrT3+7lRPehMS6B2qC2pZVFCa4eyhW69WUhOq4mKK4ph1SToZIi9ZfbKfmdsu831+4FjSGJW9SYTkDrnaeaaKxSQhIi/4Gfxn9oEX6hqWR4FEzdT6MiEWT9O07lHiY7IwdwN4SPp38GGSqSiflG373Rwsr7PWRt/ikElXrO/XjRoN+jObhvem9ubVOon9ecyRgxKpEgD4m7Nq9oo93+CQrkb5gjCVXn0AM/HQbv9ktSH5kMdip4DOdmoe2VRyZzYd5v8WrIfltv5kOkxEsgj63N2PxBrlTfjPuldtt0gXtUSDpZ+ZeR7O56+tbETO/hxSwc8wIDAQAB",
+  "permissions": ["activeTab", "scripting", "identity", "storage"],
+  "icons": { "128": "icon-128.png" },
+  "background": {
+    "service_worker": "auth.js"
+  },
+  "action": {
+    "default_title": "AutenticAI",
+    "default_icon": "icon-128.png",
+    "default_popup": "popup.html"
+  }
+}

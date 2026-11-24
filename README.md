@@ -2,7 +2,7 @@
 
 O AutenticAI é um projeto acadêmico do SENAI que ajuda a investigar informações encontradas na internet. O usuário envia um conteúdo, e a IA pesquisa fontes e apresenta uma análise com explicações e limitações.
 
-**Situação:** o [protótipo visual](prototype/README.md) é demonstrativo. A API e a migração do banco estão em `system/backend/`. Consulte o [guia do backend](system/backend/README.md) para configurar e executar a API.
+O [protótipo visual](prototype/README.md) demonstra os fluxos planejados. A [web](system/web/README.md), a [extensão Chrome](system/extension/README.md) e o [app Android](system/mobile/README.md) têm fluxos de login, análise e histórico integrados à [API](system/backend/README.md). O Supabase tem o provedor Google habilitado e a migração do histórico aplicada. A análise com Gemini real será verificada na entrega.
 
 ## Como será usado
 
@@ -10,7 +10,7 @@ O AutenticAI é um projeto acadêmico do SENAI que ajuda a investigar informaç�
 |---|---|
 | **Web — Next.js** | Texto digitado ou print enviado pelo usuário. |
 | **Extensão Chrome** | Texto da página ativa, quando o usuário solicitar. |
-| **Android — Flutter** | Print da tela iniciado por um botão flutuante, com autorização do Android. |
+| **Android — Flutter** | Texto digitado, print escolhido ou captura iniciada pelo botão flutuante com autorização do Android. |
 
 Antes de enviar, o usuário poderá revisar o conteúdo. A análise mostrará afirmações, justificativas e fontes disponíveis. Também poderá apontar **indícios** de conteúdo criado por IA, sem percentual ou confirmação de autoria. O resultado pode estar errado ou ser inconclusivo; consulte as fontes.
 
@@ -27,6 +27,8 @@ Antes de enviar, o usuário poderá revisar o conteúdo. A análise mostrará af
 O projeto oferece o nível **Light (Leve)**, configurado com Gemini 3.5 Flash. A Google redireciona esse identificador para o Gemini 3.6 Flash. Em um produto futuro, os níveis **Médio, Alto e Ultra** poderiam oferecer investigações progressivamente mais profundas, demoradas e caras. [Notas da Gemini API](https://aistudio.google.com/docs/changelog#10-08-2026)
 
 ## Documentação
+
+Acompanhe as etapas, os testes e a próxima tarefa no [plano de ação](plano-acao.md).
 
 - [Problema e referências](docs/IDENTIFICACAO_DO_PROBLEMA.md)
 - [Planejamento e requisitos](docs/PLANEJAMENTO_E_REQUISITOS.md)

@@ -11,7 +11,7 @@ flowchart TD
     A[Entrar com Google] --> B{Escolher conteúdo}
     B -->|Web| C[Digitar texto ou enviar print]
     B -->|Chrome| D[Ler texto da página ativa]
-    B -->|Android| E[Tocar no botão flutuante e autorizar captura]
+    B -->|Android| E[Digitar texto, escolher print ou autorizar captura pelo botão flutuante]
     C --> F[Revisar prévia]
     D --> F
     E --> F
@@ -28,7 +28,7 @@ A prévia informa que o conteúdo será enviado ao serviço de IA. A análise é
 | Tela | Conteúdo e ações |
 |---|---|
 | **Acesso** | Entrar com Google e encerrar sessão. |
-| **Nova análise** | Na web, inserir texto ou selecionar print; na extensão e no Android, iniciar a captura correspondente. |
+| **Nova análise** | Na web e no Android, digitar texto ou escolher print. No Android, também iniciar captura pelo botão flutuante. Na extensão, ler a aba ativa. |
 | **Prévia** | Mostrar o texto ou a imagem que será enviada, informar o uso de IA e permitir confirmar ou cancelar. |
 | **Resultado** | Mostrar afirmações, classificação, justificativas e fontes disponíveis. Apresentar indícios de IA separadamente, sem percentual ou garantia de autoria. |
 | **Histórico** | Consultar e excluir as próprias análises; mostrar texto, resultado e fontes, sem guardar o print original. |
@@ -41,4 +41,4 @@ A prévia informa que o conteúdo será enviado ao serviço de IA. A análise é
 - **Permissão negada ou tela protegida:** explicar a restrição; não capturar nem enviar conteúdo sem autorização.
 - **Sem texto verificável:** informar que não foram encontradas afirmações analisáveis, sem inventar uma classificação.
 
-O protótipo atual inclui uma opção de link e resultados fictícios. Eles demonstram a interface anterior e **não definem o escopo atualizado**, que aceita texto e print na web.
+O protótipo atual inclui uma opção de link e resultados fictícios da interface anterior. Os fluxos acima definem as entradas do projeto.

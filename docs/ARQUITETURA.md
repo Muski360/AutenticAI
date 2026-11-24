@@ -2,7 +2,7 @@
 
 ## Objetivo e escopo
 
-O AutenticAI é um projeto acadêmico de análise de informações. A API e o esquema do banco estão em `system/backend/`. A integração das três interfaces está planejada. [Guia do backend](../system/backend/README.md)
+O AutenticAI é um projeto acadêmico de análise de informações. A API e a migração do banco estão em `system/backend/`. O projeto remoto do Supabase já tem o esquema inicial do histórico. Os clientes usam Supabase Auth com PKCE e enviam o token de acesso ao Worker. A extensão usa `activeTab` para ler o texto após solicitação. O Android usa `MediaProjection` para a captura iniciada pelo botão flutuante. [Guia do backend](../system/backend/README.md)
 
 ```mermaid
 flowchart LR
@@ -22,7 +22,7 @@ O Next.js também será hospedado na infraestrutura Cloudflare. O Worker recebe 
 ## Fluxo de análise
 
 1. O usuário entra com sua conta Google e seleciona o conteúdo na web, na extensão ou no Android.
-2. O cliente mostra uma prévia e pede confirmação antes do envio. Na web, aceita texto ou imagem; a extensão extrai texto da página ativa; no Android, é enviado o print autorizado.
+2. O cliente mostra uma prévia e pede confirmação antes do envio. Web e Android aceitam texto digitado ou print escolhido. O Android também aceita um print capturado com autorização, e a extensão extrai texto da página ativa.
 3. O Worker valida a sessão e a entrada e envia o conteúdo à Gemini API com pesquisa Google habilitada. A configuração usa `gemini-3.5-flash`, que o Google redireciona para o 3.6 Flash. As fontes vêm dos metadados da pesquisa. [Notas da Gemini API](https://aistudio.google.com/docs/changelog#10-08-2026)
 4. O resultado apresenta afirmações, justificativas e fontes disponíveis. Se a pesquisa falhar ou não houver evidências suficientes, informa a limitação ou apresenta resultado inconclusivo.
 5. O histórico salva o texto enviado ou extraído da imagem, o resultado e as fontes, vinculados ao usuário. O print original não é armazenado permanentemente. Cada usuário pode consultar e excluir seus próprios registros.

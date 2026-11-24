@@ -2,14 +2,14 @@
 
 ## Problema e objetivo
 
-Verificar informações encontradas na internet pode exigir tempo e consultas a várias fontes. O AutenticAI pretende ajudar nessa pesquisa, apresentando explicações e referências em uma interface simples. É um projeto acadêmico do SENAI, ainda em planejamento.
+Verificar informações encontradas na internet pode exigir tempo e consultas a várias fontes. O AutenticAI é um projeto acadêmico do SENAI que ajuda nessa pesquisa, apresentando explicações e referências em uma interface simples.
 
 ## Requisitos funcionais
 
 | ID | O sistema deverá permitir |
 |---|---|
 | RF01 | Entrar e sair usando uma conta Google pelo Supabase Auth. |
-| RF02 | Enviar texto ou print para análise na web. |
+| RF02 | Enviar texto digitado ou print escolhido para análise na web e no Android. |
 | RF03 | Solicitar a análise do texto da página ativa pela extensão Chrome. |
 | RF04 | Usar um botão flutuante no Android para iniciar a captura, após as permissões necessárias. |
 | RF05 | Revisar e confirmar o conteúdo antes de enviá-lo para análise. |
