@@ -14,3 +14,18 @@ Copie `.env.example` para `.env.local` e preencha a URL e a chave publicável do
 No Supabase Auth, habilite o provedor Google e autorize `http://localhost:3000/` como URL de retorno para o ambiente local. Configure o callback do Supabase no cliente OAuth do Google. A aplicação usa a página inicial para concluir o login no mesmo navegador. [Guia do Supabase](https://supabase.com/docs/guides/auth/social-sign-in/auth-google)
 
 Inicie a [API local](../backend/README.md) e abra [localhost:3000](http://localhost:3000). Use `npm run lint` e `npm run build` para validar o projeto. O teste com análise real precisa de acesso ao Gemini com pesquisa.
+
+## Publicação no Cloudflare
+
+A [web publicada](https://autenticai-web.muski.workers.dev/) é servida por Workers Static Assets. A `Site URL` do Supabase aponta para essa origem, e a lista de redirecionamentos inclui `https://autenticai-web.muski.workers.dev/`.
+
+Para republicar, instale as dependências em `system/backend/` e `system/web/`. Em `system/web/`, configure `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` com os valores do projeto e `NEXT_PUBLIC_API_URL` com `https://autenticai-api.muski.workers.dev`. Essas variáveis entram no build. Em PowerShell, execute:
+
+```powershell
+$env:CLOUDFLARE_STATIC_EXPORT = '1'
+npm run build
+if ($LASTEXITCODE -eq 0) {
+  & ../backend/node_modules/.bin/wrangler.cmd deploy --config wrangler.jsonc
+}
+Remove-Item Env:CLOUDFLARE_STATIC_EXPORT
+```

@@ -17,7 +17,7 @@ flowchart LR
     API --> AUTH
 ```
 
-O Next.js também será hospedado na infraestrutura Cloudflare. O Worker recebe as requisições, valida a sessão, chama o Gemini e registra os resultados no Supabase. A resposta é enviada diretamente ao cliente. A chave do Gemini fica somente no servidor, como segredo do Worker.
+A web Next.js é exportada como arquivos estáticos e servida por um Worker. O Worker da API valida a sessão, consulta o histórico no Supabase e, quando configurado, chama o Gemini e registra os resultados. A chave do Gemini é um segredo do Worker da API. [Publicação da web](../system/web/README.md#publicação-no-cloudflare) · [Publicação da API](../system/backend/README.md#publicação-no-cloudflare)
 
 ## Fluxo de análise
 
@@ -59,5 +59,5 @@ Os níveis futuros não têm modelos ou recursos contratados e não garantem mai
 
 - [Captura de tela no Android](https://developer.android.com/media/grow/media-projection)
 - [Pesquisa Google com Gemini](https://ai.google.dev/gemini-api/docs/google-search)
-- [Next.js na Cloudflare](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/)
+- [Exportação estática do Next.js](https://nextjs.org/docs/app/guides/static-exports) e [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)
 - [Login Google no Supabase](https://supabase.com/docs/guides/auth/social-login/auth-google)

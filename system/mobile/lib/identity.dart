@@ -84,18 +84,21 @@ ThemeData investigationTheme() {
             fontFamily: 'Inter',
             fontSize: 16,
             height: 1.5,
+            color: ink,
           ),
           titleLarge: const TextStyle(
             fontFamily: 'Inter',
             fontSize: 26,
             fontWeight: FontWeight.w500,
             letterSpacing: -1.2,
+            color: ink,
           ),
           titleMedium: const TextStyle(
             fontFamily: 'Inter',
             fontSize: 19,
             fontWeight: FontWeight.w600,
             letterSpacing: -.5,
+            color: ink,
           ),
         ),
   );
@@ -115,30 +118,6 @@ class BrandLockup extends StatelessWidget {
   );
 }
 
-class Eyebrow extends StatelessWidget {
-  const Eyebrow(this.label, {super.key});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      Container(width: 6, height: 6, color: cyan),
-      const SizedBox(width: 9),
-      Expanded(
-        child: Text(
-          label.toUpperCase(),
-          style: const TextStyle(
-            fontSize: 11,
-            color: muted,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.05,
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
 class DisplayTitle extends StatelessWidget {
   const DisplayTitle(this.lead, this.accent, {super.key});
   final String lead;
@@ -147,8 +126,8 @@ class DisplayTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.headlineLarge!.copyWith(
-      fontSize: 38,
-      height: 1.04,
+      fontSize: 40,
+      height: 1.02,
       fontWeight: FontWeight.w500,
       letterSpacing: -2.2,
     );
@@ -158,7 +137,7 @@ class DisplayTitle extends StatelessWidget {
         TextSpan(
           style: style,
           children: [
-            TextSpan(text: '$lead\n'),
+            TextSpan(text: '$lead '),
             TextSpan(
               text: accent,
               style: const TextStyle(color: blue),
@@ -277,17 +256,19 @@ class EvidenceOrbit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ExcludeSemantics(
-    child: SizedBox.square(
-      dimension: 142,
+    child: SizedBox(
+      width: double.infinity,
+      height: 144,
       child: CustomPaint(
         painter: _OrbitLines(),
         child: Center(
           child: DecoratedBox(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: navy,
               shape: BoxShape.circle,
+              border: Border.all(color: paper, width: 4),
             ),
-            child: Image.asset('assets/symbol.webp', width: 76, height: 76),
+            child: Image.asset('assets/symbol.webp', width: 72, height: 72),
           ),
         ),
       ),
@@ -299,22 +280,20 @@ class _OrbitLines extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
+    final dot = Paint()..color = const Color(0xFFC6D4DC);
+    for (var x = center.dx % 14; x < size.width; x += 14) {
+      for (var y = center.dy % 14; y < size.height; y += 14) {
+        canvas.drawCircle(Offset(x, y), .65, dot);
+      }
+    }
     final stroke = Paint()
       ..color = const Color(0xFFC4DDE9)
       ..style = PaintingStyle.stroke;
     for (final radius in [48.0, 57.0, 67.0]) {
       canvas.drawCircle(center, radius, stroke);
     }
-    canvas.drawLine(
-      Offset(0, center.dy),
-      Offset(size.width, center.dy),
-      stroke,
-    );
-    canvas.drawLine(
-      Offset(center.dx, 0),
-      Offset(center.dx, size.height),
-      stroke,
-    );
+    canvas.drawLine(center.translate(-80, 0), center.translate(80, 0), stroke);
+    canvas.drawLine(center.translate(0, -72), center.translate(0, 72), stroke);
     canvas.drawCircle(
       Offset(center.dx + 40, center.dy - 40),
       3.5,

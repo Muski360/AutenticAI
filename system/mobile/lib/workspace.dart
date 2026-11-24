@@ -251,8 +251,6 @@ class _WorkspaceState extends State<Workspace> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Eyebrow('Prévia'),
-                      const SizedBox(height: 9),
                       Text('Revise o conteúdo', style: type.titleLarge),
                       const SizedBox(height: 14),
                       if (preview.text case final String text)
@@ -277,6 +275,7 @@ class _WorkspaceState extends State<Workspace> {
                       FilledButton.icon(
                         onPressed: enabled ? () => _submit(preview) : null,
                         icon: const Icon(Icons.arrow_outward, size: 17),
+                        iconAlignment: IconAlignment.end,
                         label: const Text('Confirmar envio'),
                       ),
                       TextButton(
@@ -292,14 +291,7 @@ class _WorkspaceState extends State<Workspace> {
                   ),
                 )
               else ...[
-                const Eyebrow('Nova análise'),
-                const SizedBox(height: 12),
-                const DisplayTitle('O que vamos', 'investigar?'),
-                const SizedBox(height: 12),
-                const Text(
-                  'Escolha um texto ou print. Você revisa antes de enviar.',
-                  style: TextStyle(color: muted),
-                ),
+                const DisplayTitle('Nova', 'análise'),
                 const SizedBox(height: 18),
                 Panel(
                   child: Column(
@@ -313,13 +305,12 @@ class _WorkspaceState extends State<Workspace> {
                         maxLength: maxText,
                         decoration: const InputDecoration(
                           labelText: 'Texto para análise',
-                          hintText:
-                              'Digite ou cole o texto que você quer investigar.',
                         ),
                       ),
                       FilledButton.icon(
                         onPressed: enabled ? _reviewText : null,
                         icon: const Icon(Icons.arrow_outward, size: 17),
+                        iconAlignment: IconAlignment.end,
                         label: const Text('Revisar texto'),
                       ),
                       const SizedBox(height: 6),
@@ -334,20 +325,27 @@ class _WorkspaceState extends State<Workspace> {
               ],
               const SizedBox(height: 14),
               Panel(
-                color: tint,
+                color: navy,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Eyebrow('Botão flutuante'),
-                    const SizedBox(height: 9),
-                    Text('Captura de tela', style: type.titleLarge),
+                    Text(
+                      'Captura de tela',
+                      style: type.titleLarge?.copyWith(color: cyan),
+                    ),
                     const SizedBox(height: 7),
                     const Text(
-                      'Habilite o botão flutuante para iniciar uma captura sobre outro app.',
-                      style: TextStyle(color: muted),
+                      'Use o botão flutuante para capturar a tela de outro app.',
+                      style: TextStyle(color: Color(0xFFD8E5ED)),
                     ),
                     const SizedBox(height: 10),
-                    OutlinedButton.icon(
+                    FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: paper,
+                        foregroundColor: navy,
+                        disabledBackgroundColor: const Color(0xFF29485D),
+                        disabledForegroundColor: const Color(0xFFB9CAD4),
+                      ),
                       onPressed: enabled ? _toggleOverlay : null,
                       icon: const Icon(Icons.screenshot_outlined, size: 18),
                       label: Text(
@@ -370,14 +368,16 @@ class _WorkspaceState extends State<Workspace> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Eyebrow('Seu espaço de investigação'),
-                    const SizedBox(height: 9),
                     Text('Histórico', style: type.titleLarge),
                     const SizedBox(height: 10),
                     OutlinedButton.icon(
                       onPressed: enabled ? () => _loadHistory(0) : null,
                       icon: const Icon(Icons.schedule_outlined, size: 18),
-                      label: const Text('Abrir histórico'),
+                      label: Text(
+                        history == null
+                            ? 'Abrir histórico'
+                            : 'Atualizar histórico',
+                      ),
                     ),
                     if (history != null) ...[
                       if (history.isEmpty)
@@ -476,14 +476,13 @@ class ReportView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Eyebrow('Da dúvida à evidência'),
-        const SizedBox(height: 9),
         Text(
           'Resultado',
           style: type.headlineMedium?.copyWith(letterSpacing: -1.15),
         ),
         const SizedBox(height: 12),
         Panel(
+          highlight: true,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -497,10 +496,8 @@ class ReportView extends StatelessWidget {
                 FeedbackLine(note),
               if (claims.isEmpty)
                 const Text('Nenhuma afirmação verificável foi identificada.'),
-              for (final (index, claim) in claims.indexed) ...[
+              for (final claim in claims) ...[
                 const Divider(height: 24),
-                Eyebrow('Afirmação ${index + 1}'),
-                const SizedBox(height: 6),
                 Text(claim['texto'] as String, style: type.titleMedium),
                 const SizedBox(height: 8),
                 Verdict(
@@ -520,26 +517,30 @@ class ReportView extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Panel(
+          color: surface,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Eyebrow('Rastreabilidade'),
-              const SizedBox(height: 8),
               Text('Fontes', style: type.titleLarge),
               if (sources.isEmpty)
                 const Text(
                   'Nenhuma fonte disponível para este relatório.',
                   style: TextStyle(color: muted),
                 ),
-              for (final (index, source) in sources.indexed)
+              for (final (index, source) in sources.indexed) ...[
+                const Divider(height: 16),
                 if (Uri.tryParse(source['url'] as String) case final Uri link
                     when link.isScheme('https') || link.isScheme('http'))
                   TextButton.icon(
                     onPressed: () =>
                         launchUrl(link, mode: LaunchMode.externalApplication),
                     icon: const Icon(Icons.arrow_outward, size: 16),
+                    iconAlignment: IconAlignment.end,
                     label: Text('${index + 1}. ${source['titulo']}'),
-                  ),
+                  )
+                else
+                  Text('${index + 1}. ${source['titulo']}'),
+              ],
               if (report['sugestoes_google'] case final String html
                   when html.isNotEmpty)
                 SearchSuggestions(key: ValueKey(html), html: html),
@@ -553,8 +554,6 @@ class ReportView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Eyebrow('Sobre a autoria'),
-              const SizedBox(height: 7),
               Text(
                 'Indícios de conteúdo gerado por IA',
                 style: type.titleMedium,
@@ -565,7 +564,7 @@ class ReportView extends StatelessWidget {
                     'O relatório não apontou indícios.',
               ),
               const Text(
-                'Indícios não confirmam a autoria do conteúdo.',
+                'Indícios não confirmam autoria.',
                 style: TextStyle(color: muted),
               ),
             ],

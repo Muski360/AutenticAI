@@ -54,15 +54,21 @@ Ao terminar uma etapa, atualize seu estado, anote o que testou e indique a próx
 
 **Verificação local.** A análise estática e os quatro testes Flutter passaram. No emulador Android 14, conferi o retorno PKCE com autenticação simulada, a recusa do consentimento, a captura pelo botão flutuante, a prévia, o encerramento da sessão de captura e a abertura do histórico. O Supabase real iniciou o redirecionamento do Android ao Google.
 
-**Próxima ação.** No Android, entrar com uma conta Google real e abrir o histórico. Para conferir a captura sem custo, cancelar na prévia. Depois, iniciar o acabamento visual da etapa 5.
+**Validação do usuário.** O login Google e a abertura do histórico funcionaram no Android.
 
 ## 5. Preparar e verificar a entrega
 
-**Pendente.** Usar o ambiente de entrega para a verificação final.
+**Identidade visual aplicada.** A [web](https://autenticai-web.muski.workers.dev/) e a [API](https://autenticai-api.muski.workers.dev/health) estão publicadas no Cloudflare.
 
 1. Aplicar a [identidade visual](docs/IDENTIDADE_VISUAL.md) à web, à extensão e ao Android após fechar os fluxos funcionais. Conferir contraste, teclado, toque e telas estreitas.
 2. Publicar a web e o Worker no Cloudflare. Configurar segredos no Worker, HTTPS, origens permitidas e URLs de retorno nos provedores. Gerar o APK de demonstração e preparar a pasta da extensão para carregamento descompactado.
 3. Testar login e histórico com duas contas e verificar os fluxos das três plataformas com análises simuladas. Conferir falhas de rede, permissões Android e ausência de armazenamento permanente de prints. Quando houver saldo e cota, fazer **uma única análise real de uma frase curta**, com pesquisa habilitada e sem repetição automática. Conferir resposta, gravação no histórico e exclusão.
 4. Atualizar os guias com as instruções de instalação e execução, as limitações conhecidas e um roteiro de demonstração. Registrar os resultados dos testes e as versões entregues.
+
+**Verificação visual local.** A web passou no lint, no build e nos testes de navegador entre 320 e 1440 px, com teclado e movimento reduzido. A extensão Manifest V3 passou no build e no teste do painel em 320 e 360 px. O Android passou na análise estática e nos quatro testes Flutter. No emulador Android 16, validei por toque o editor, a prévia, o cancelamento, o resultado com fontes e o histórico. Os fluxos usaram dados simulados, sem chamadas ao Gemini.
+
+**Verificação publicada.** A abertura, os recursos estáticos e a página 404 passaram no navegador. A API respondeu `200` em `/health`, `204` no preflight da web e da extensão, `403` para origem externa, `401` para sessão ausente ou inválida e `503` no teste de análise com corpo vazio. No Supabase, confirmei a migração, o RLS do histórico e a URL de retorno. O redirecionamento para o Google foi real. O retorno OAuth, a sessão após recarga, o histórico e a saída passaram no build publicado com respostas simuladas. A análise pelo Gemini fica para o teste pago final.
+
+**Próxima ação.** Confirmar o login Google com uma conta real na web publicada, recarregar a página e abrir o histórico.
 
 **Pronto quando** outra pessoa consegue instalar ou abrir as três interfaces e executar a demonstração seguindo o README.

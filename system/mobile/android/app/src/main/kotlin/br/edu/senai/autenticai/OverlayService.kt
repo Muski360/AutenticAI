@@ -40,6 +40,7 @@ class OverlayService : Service() {
             val trigger = Button(this).apply {
                 val density = resources.displayMetrics.density
                 text = "Capturar"
+                isAllCaps = false
                 setTextColor(Color.WHITE)
                 minHeight = (48 * density).toInt()
                 background = GradientDrawable().apply {

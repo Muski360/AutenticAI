@@ -1,9 +1,10 @@
 "use client";
 
 import { createClient, type Session, type SupabaseClient } from "@supabase/supabase-js";
+import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Workspace } from "./workspace";
 import { Brand, Icon, Investigation } from "./brand";
+import { Workspace } from "./workspace";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -61,20 +62,14 @@ export default function Home() {
         <a className="skip-link" href="#main-content">Pular para o conteúdo</a>
         <aside className="app-sidebar">
           <a className="sidebar-brand" href="#main-content"><Brand /></a>
-          <span className="eyebrow sidebar-caption">Seu espaço de investigação</span>
           <nav className="sidebar-nav" aria-label="Espaço de análise">
             <a href="#new-analysis"><Icon name="plus" /> Nova análise</a>
             <a href="#history"><Icon name="clock" /> Histórico</a>
           </nav>
-          <div className="sidebar-note">
-            <Icon name="lock" />
-            <p>Seu histórico é privado. Você pode consultar e excluir suas análises.</p>
-          </div>
         </aside>
         <div className="app-column">
           <header className="app-header">
             <a className="mobile-brand" href="#main-content"><Brand /></a>
-            <span className="eyebrow breadcrumb">Plataforma <span>/</span> Investigação</span>
             <button type="button" className="button small" disabled={busy} onClick={authenticate}>Sair</button>
           </header>
           <main id="main-content" className="app-main" tabIndex={-1}>
@@ -94,37 +89,65 @@ export default function Home() {
       <header className="site-header">
         <div className="frame header-inner">
           <a href="#main-content"><Brand /></a>
-          <nav aria-label="Navegação principal"><a href="#metodo">O método</a></nav>
-          <button className="button dark small" type="button" disabled={!ready || busy} onClick={authenticate}>Entrar <Icon name="arrow" /></button>
+          <nav aria-label="Navegação principal">
+            <a href="#metodo">O método</a>
+            <a href="#plataformas">Onde usar</a>
+            <a href="#compromisso">Privacidade</a>
+          </nav>
         </div>
       </header>
       <main id="main-content" tabIndex={-1}>
-        <section className="hero frame" aria-labelledby="hero-heading">
-          <div className="hero-copy">
-            <p className="eyebrow marker">Um novo olhar sobre a informação</p>
-            <h1 id="hero-heading">Antes de<br />compartilhar,<br /><span>questione.</span></h1>
-            <p className="hero-intro">Entre uma informação e a sua confiança, existe um caminho. Explore as evidências. Entenda o contexto. Forme sua opinião.</p>
-            <div className="actions hero-actions">
-              <button className="button dark" type="button" disabled={!ready || busy} onClick={authenticate}>Entrar com Google <Icon name="arrow" /></button>
-              <a className="text-link" href="#metodo">Conheça a ideia <Icon name="right" /></a>
+        <section className="hero" aria-labelledby="hero-heading">
+          <div className="frame hero-grid">
+            <div className="hero-copy">
+              <h1 id="hero-heading">Análise de<br /><span>informações</span></h1>
+              <div className="actions hero-actions">
+                <button className="button dark" type="button" disabled={!ready || busy} onClick={authenticate}>Entrar com Google <Icon name="arrow" /></button>
+              </div>
+              {error ? <p className="feedback error" role="alert">{error}</p> : !configured || !ready ? (
+                <p className="hero-note" role="status">{configured ? "Verificando sua sessão…" : "O acesso ainda não está disponível neste ambiente."}</p>
+              ) : null}
             </div>
-            {error ? <p className="feedback error" role="alert">{error}</p> : !configured || !ready ? (
-              <p className="hero-note" role="status">{configured ? "Verificando sua sessão…" : "O acesso ainda não está disponível neste ambiente."}</p>
-            ) : <p className="hero-note"><Icon name="lock" /> Você revisa o conteúdo antes de enviar.</p>}
+            <Investigation />
           </div>
-          <Investigation />
         </section>
-        <div className="frame hero-end"><span>Independência para pensar. Contexto para decidir.</span><a href="#metodo">Conheça o método <span aria-hidden="true">↓</span></a></div>
         <section className="method" id="metodo" aria-labelledby="method-title">
           <div className="frame">
-            <p className="eyebrow marker">O método</p>
-            <h2 id="method-title">Da dúvida<br />à <span>evidência.</span></h2>
+            <div className="method-head">
+              <h2 id="method-title">O método</h2>
+              <div className="method-dial" aria-hidden="true"><Image src="/brand/symbol.webp" width={320} height={320} alt="" unoptimized /></div>
+            </div>
             <ol>
-              <li><span>01</span><h3>Escolha o conteúdo.</h3><p>Digite um texto ou selecione um print para investigar.</p><Icon name="file" /></li>
-              <li><span>02</span><h3>Revise antes de enviar.</h3><p>Confira o que será enviado para análise e decida se quer continuar.</p><Icon name="shield" /></li>
-              <li><span>03</span><h3>Explore as fontes.</h3><p>Leia as justificativas e consulte as fontes disponíveis antes de tirar conclusões.</p><Icon name="search" /></li>
+              <li><span aria-hidden="true">01</span><p>Escolha um texto ou print.</p><Icon name="file" /></li>
+              <li><span aria-hidden="true">02</span><p>Revise o conteúdo antes de enviar.</p><Icon name="shield" /></li>
+              <li><span aria-hidden="true">03</span><p>Consulte as justificativas e fontes.</p><Icon name="search" /></li>
             </ol>
           </div>
+        </section>
+        <section className="frame landing-section" id="exemplo" tabIndex={-1} aria-labelledby="example-title">
+          <h2 id="example-title">Relatório de exemplo</h2>
+          <div className="example-report">
+            <blockquote>“A Lua emite luz própria.”</blockquote>
+            <p className="verdict" data-verdict="contradita">Contradita</p>
+            <p className="example-explanation">A superfície da Lua reflete a luz do Sol.</p>
+          </div>
+        </section>
+        <section className="platforms" id="plataformas" aria-labelledby="platforms-title">
+          <div className="frame landing-section">
+            <h2 id="platforms-title">Onde usar</h2>
+            <dl className="platform-list">
+              <div><dt><Icon name="browser" /> Web</dt><dd>Texto ou print.</dd></div>
+              <div><dt><Icon name="scan" /> Extensão Chrome</dt><dd>Texto da aba ativa.</dd></div>
+              <div><dt><Icon name="phone" /> Android</dt><dd>Texto, print ou captura de tela com autorização.</dd></div>
+            </dl>
+          </div>
+        </section>
+        <section className="frame landing-section commitment" id="compromisso" aria-labelledby="commitment-title">
+          <h2 id="commitment-title">Privacidade <span>e limites</span></h2>
+          <dl>
+            <div><dt>O histórico é privado</dt><dd>Você pode consultar e excluir suas análises.</dd></div>
+            <div><dt>Limites da análise</dt><dd>O resultado pode conter erros ou ser inconclusivo.</dd></div>
+          </dl>
         </section>
       </main>
       <footer className="frame site-footer"><Brand /><span>Projeto acadêmico do SENAI</span></footer>

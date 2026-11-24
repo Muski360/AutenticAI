@@ -4,6 +4,8 @@ O AutenticAI é um projeto acadêmico do SENAI que ajuda a investigar informaç�
 
 O [protótipo visual](prototype/README.md) demonstra os fluxos planejados. A [web](system/web/README.md), a [extensão Chrome](system/extension/README.md) e o [app Android](system/mobile/README.md) têm fluxos de login, análise e histórico integrados à [API](system/backend/README.md). O Supabase tem o provedor Google habilitado e a migração do histórico aplicada. A análise com Gemini real será verificada na entrega.
 
+A [web publicada](https://autenticai-web.muski.workers.dev/) e a [API no Cloudflare](https://autenticai-api.muski.workers.dev/health) usam o Supabase do projeto. O envio para análise ficará disponível após a configuração do Gemini no Worker.
+
 ## Como será usado
 
 | Plataforma | Entrada para análise |

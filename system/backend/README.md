@@ -15,7 +15,13 @@ Com o Worker local em execução, use `npm run smoke` em outro terminal. O coman
 
 O identificador configurado é `gemini-3.5-flash`, que a Google redireciona para o Gemini 3.6 Flash. A pesquisa Google requer acesso para uso pago da API. [Notas da Gemini API](https://aistudio.google.com/docs/changelog#10-08-2026) · [Preços e acesso](https://aistudio.google.com/docs/pricing)
 
-Para publicar no Cloudflare, configure as variáveis da API na conta do Worker ou use `npx wrangler deploy --secrets-file .env` com o arquivo local preenchido. [Configuração de segredos no Cloudflare](https://developers.cloudflare.com/workers/configuration/secrets/)
+## Publicação no Cloudflare
+
+O Worker `autenticai-api` está em [autenticai-api.muski.workers.dev](https://autenticai-api.muski.workers.dev/health). As origens autorizadas são `https://autenticai-web.muski.workers.dev` e `chrome-extension://cneblicgbokemnhohbkepapiahgfnmgh`.
+
+Para publicar uma nova versão, execute `npm test`, `npm run check` e `npx wrangler deploy` em `system/backend/`. Ao configurar um novo Worker, passe um JSON temporário com `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` e `ALLOWED_ORIGINS` para `wrangler deploy --secrets-file`. Use a chave publicável do Supabase, que permite ao PostgreSQL aplicar o RLS com o token de cada usuário. [Configuração de segredos no Cloudflare](https://developers.cloudflare.com/workers/configuration/secrets/)
+
+O histórico já está disponível para sessões Google. O Worker responde `503` a pedidos de análise até a configuração de `GEMINI_API_KEY`. Adicione essa chave como segredo do Worker na etapa final.
 
 ## Rotas
 

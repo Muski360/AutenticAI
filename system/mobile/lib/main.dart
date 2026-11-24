@@ -32,6 +32,7 @@ class AutenticAIApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AutenticAI',
+      debugShowCheckedModeBanner: false,
       theme: investigationTheme(),
       home: auth == null || api == null
           ? Scaffold(
@@ -183,22 +184,15 @@ class EntryScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Eyebrow('Da dúvida à evidência'),
-                  const Align(
-                    alignment: Alignment.centerRight,
-                    child: EvidenceOrbit(),
-                  ),
-                  const DisplayTitle('Antes de compartilhar,', 'questione.'),
-                  const SizedBox(height: 14),
-                  const Text(
-                    'Explore as evidências. Entenda o contexto. Forme sua opinião.',
-                    style: TextStyle(color: muted),
-                  ),
+                  const EvidenceOrbit(),
+                  const Divider(height: 24),
+                  const DisplayTitle('Análise de', 'informações'),
                   const SizedBox(height: 18),
                   if (configured)
                     FilledButton.icon(
                       onPressed: onLogin,
                       icon: const Icon(Icons.arrow_outward, size: 17),
+                      iconAlignment: IconAlignment.end,
                       label: const Text('Entrar com Google'),
                     )
                   else

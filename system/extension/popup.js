@@ -20,6 +20,7 @@ async function auth(type) {
 function showSession(signedIn) {
   $("access").hidden = signedIn;
   $("workspace").hidden = !signedIn;
+  $("logout").hidden = !signedIn;
   if (!signedIn) {
     clearPreview();
     $("result").hidden = true;
@@ -117,7 +118,11 @@ function showReport(report) {
     details.append(element("summary", "Texto analisado"), element("pre", report.texto_analisado));
     body.append(details);
   }
-  if (report.limitacao) body.append(element("p", report.limitacao));
+  if (report.limitacao) {
+    const limitation = element("p", report.limitacao);
+    limitation.className = "muted";
+    body.append(limitation);
+  }
   if (!report.afirmacoes.length) body.append(element("p", "Nenhuma afirmação verificável foi identificada."));
   for (const claim of report.afirmacoes) {
     const article = element("article");
@@ -125,13 +130,29 @@ function showReport(report) {
     verdict.className = "verdict";
     verdict.dataset.verdict = claim.classificacao;
     article.append(element("h3", claim.texto), verdict, element("p", claim.justificativa));
-    if (claim.fontes.length) article.append(element("p", `Fontes: ${claim.fontes.join(", ")}`));
+    const references = claim.fontes.filter(number => report.fontes[number - 1]);
+    if (references.length) {
+      const citations = element("p", "Fontes: ");
+      for (const number of references) {
+        const link = element("a", number);
+        link.className = "reference";
+        link.href = `#source-${number}`;
+        link.setAttribute("aria-label", `Fonte ${number}`);
+        citations.append(link);
+      }
+      article.append(citations);
+    }
     body.append(article);
   }
+  const sourcesSection = element("section");
+  sourcesSection.className = "report-sources";
+  sourcesSection.append(element("h3", "Fontes"));
   if (report.fontes.length) {
     const sources = element("ol");
-    for (const source of report.fontes) {
+    for (const [index, source] of report.fontes.entries()) {
       const item = element("li");
+      item.id = `source-${index + 1}`;
+      item.tabIndex = -1;
       const url = URL.canParse(source.url) && new URL(source.url);
       if (url && ["http:", "https:"].includes(url.protocol)) {
         const link = element("a", source.titulo);
@@ -142,7 +163,11 @@ function showReport(report) {
       } else item.textContent = source.titulo;
       sources.append(item);
     }
-    body.append(element("h3", "Fontes"), sources);
+    sourcesSection.append(sources);
+  } else {
+    const empty = element("p", "Nenhuma fonte disponível para este relatório.");
+    empty.className = "muted";
+    sourcesSection.append(empty);
   }
   if (report.sugestoes_google) {
     const frame = element("iframe");
@@ -150,8 +175,9 @@ function showReport(report) {
     frame.setAttribute("sandbox", "allow-popups allow-popups-to-escape-sandbox");
     frame.referrerPolicy = "no-referrer";
     frame.srcdoc = '<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src data: https:; base-uri \'none\'; form-action \'none\'"><base target="_blank">' + report.sugestoes_google;
-    body.append(frame);
+    sourcesSection.append(frame);
   }
+  body.append(sourcesSection);
   const authorship = element("div");
   authorship.className = "authorship";
   authorship.append(element("h3", "Indícios de conteúdo gerado por IA"),
@@ -193,7 +219,7 @@ async function loadHistory(offset = 0) {
       }
       row.remove();
       if (!list.childElementCount) records.prepend(element("p", "Nenhuma análise nesta página."));
-      $("history").focus();
+      $("history-title").focus();
     }));
     confirm.classList.add("danger");
     confirmation.append(confirm, button("Cancelar", () => {

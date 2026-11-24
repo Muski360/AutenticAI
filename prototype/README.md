@@ -26,7 +26,7 @@ Acesse **http://localhost:8080/prototype/**. Não é preciso instalar pacotes ou
 
 ## Direção visual
 
-Composição editorial branca, azul profundo e ciano, com hierarquia tipográfica ampla e divisores discretos. Os lockups e o símbolo são os PNGs reais de `../assets/`; o diagrama organiza **afirmação → contexto → evidências**.
+Composição editorial branca, azul profundo e ciano, com títulos diretos e divisores discretos. A marca usa os PNGs em `../assets/`. A abertura mostra uma afirmação e sua classificação, com um atalho para o relatório de exemplo.
 
 Foi considerada uma abertura escura e imersiva. A composição branca foi escolhida para favorecer leitura e neutralidade, com o símbolo ciano como ponto de identidade na visualização.
 

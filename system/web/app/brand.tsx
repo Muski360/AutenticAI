@@ -11,6 +11,9 @@ const glyphs = {
   lock: <><rect x="4" y="10" width="16" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></>,
   search: <><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></>,
   shield: <path d="m12 22 1.5-.6C19.4 19 21 15.9 21 11V5l-9-3-9 3v6c0 4.9 1.6 8 7.5 10.4zM8 12l3 3 5-6"/>,
+  scan: <path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3m13 5h3a2 2 0 0 0 2-2v-3M3 12h18"/>,
+  browser: <><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18m-12 0v11"/></>,
+  phone: <><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></>,
 } satisfies Record<string, ReactNode>;
 
 export function Icon({ name }: { name: keyof typeof glyphs }) {
@@ -24,28 +27,21 @@ export function Brand() {
 export function Investigation() {
   return (
     <figure className="investigation">
-      <div className="figure-line"><span>Da dúvida à evidência</span><span>Fig. 01 <Icon name="arrow" /></span></div>
       <div className="investigation-canvas">
         <div className="investigation-orbits" aria-hidden="true"><i/><i/><i/><b/><b/></div>
         <svg className="investigation-path" viewBox="0 0 600 520" preserveAspectRatio="none" aria-hidden="true">
           <path d="M170 140H245Q270 140 270 165V255Q270 275 290 275H340Q365 275 365 300V376H430"/>
+          <circle cx="170" cy="140" r="4"/><circle cx="430" cy="376" r="4"/>
         </svg>
         <div className="investigation-core" aria-hidden="true"><Image src="/brand/symbol.webp" width={320} height={320} alt="" unoptimized /></div>
         <div className="claim-note">
-          <span className="note-label"><b>01</b> A afirmação</span>
           <blockquote>“A Lua emite luz própria.”</blockquote>
-          <span className="note-detail"><Icon name="file" /> Algo para questionar</span>
         </div>
-        <div className="context-note"><Icon name="plus" /><div><span className="note-label">02 / O contexto</span><p>Luz solar refletida</p></div></div>
         <div className="finding-note">
-          <span className="note-label"><b>03</b> A evidência</span>
           <p className="finding-verdict"><span aria-hidden="true">×</span> Contradita</p>
-          <p>A Lua reflete a luz do Sol.<br />Ela não produz luz própria.</p>
-          <span className="finding-foot">Afirmação verificada <Icon name="right" /></span>
+          <a className="finding-foot" href="#exemplo">Ver exemplo <Icon name="right" /></a>
         </div>
-        <span className="figure-coordinate" aria-hidden="true">+ CONTEXTO, NÃO ACHISMO.</span>
       </div>
-      <figcaption className="figure-line figure-end"><span><i/> Exemplo ilustrativo</span><span>Sem consulta real a fontes.</span></figcaption>
     </figure>
   );
 }

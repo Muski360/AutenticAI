@@ -36,9 +36,16 @@ export function Workspace({ api, token }: { api: string; token: string }) {
   const [deleting, setDeleting] = useState("");
   const resultTitle = useRef<HTMLHeadingElement>(null);
   const previewTitle = useRef<HTMLHeadingElement>(null);
+  const historyTitle = useRef<HTMLHeadingElement>(null);
+  const reviewButton = useRef<HTMLButtonElement>(null);
+  const returnToEditor = useRef(false);
 
   useEffect(() => {
     if (preview) previewTitle.current?.focus();
+    if (!preview && returnToEditor.current) {
+      returnToEditor.current = false;
+      reviewButton.current?.focus();
+    }
     if (preview && "url" in preview) return () => URL.revokeObjectURL(preview.url);
   }, [preview]);
 
@@ -133,34 +140,34 @@ export function Workspace({ api, token }: { api: string; token: string }) {
       setDeleting("");
       setReport(current => current?.id === id ? undefined : current);
       setHistory(undefined);
-      setNotice("Análise excluída. Abra o histórico para atualizar a lista.");
+      setNotice("Análise excluída.");
+      historyTitle.current?.focus();
     });
   }
 
   return (
     <>
-      <header className="app-intro" id="new-analysis">
-        <p className="eyebrow">Nova análise</p>
-        <h1>O que vamos <span>investigar?</span></h1>
-        <p>Escolha um texto ou print. Você revisa o conteúdo antes de confirmar o envio.</p>
+      <header className="app-intro" id="new-analysis" tabIndex={-1}>
+        <h1>Nova <span>análise</span></h1>
       </header>
-      {busy && <p className="feedback progress" role="status">{busy}</p>}
-      {notice && <p className="feedback success" role="status">{notice}</p>}
-      {error && <p className="feedback error" role="alert">{error}</p>}
-      <div className="editor-layout">
+      {busy && <p className="feedback progress workspace-feedback" role="status">{busy}</p>}
+      {notice && <p className="feedback success workspace-feedback" role="status">{notice}</p>}
+      {error && <p className="feedback error workspace-feedback" role="alert">{error}</p>}
       <section className="panel editor" aria-label="Conteúdo para análise">
         {preview ? (
           <>
             <div className="panel-body preview-body">
-            <p className="eyebrow marker">Prévia</p>
             <h2 ref={previewTitle} tabIndex={-1}>Revise o conteúdo</h2>
             {"text" in preview
               ? <p className="content preview-text">{preview.text}</p>
               : <Image className="preview" src={preview.url} alt="Print selecionado para análise" width={640} height={480} unoptimized />}
-            <p className="guide"><Icon name="lock" /> Ao confirmar, seu conteúdo será enviado ao Gemini. O histórico guarda o texto e o relatório.</p>
+            <p className="guide"><Icon name="lock" /> Você envia o conteúdo ao Gemini ao confirmar. O histórico privado guarda o texto e o relatório.</p>
             </div>
             <div className="panel-actions">
-              <button type="button" disabled={!!busy} onClick={() => setPreview(undefined)}>Voltar e editar</button>
+              <button type="button" disabled={!!busy} onClick={() => {
+                returnToEditor.current = true;
+                setPreview(undefined);
+              }}>Voltar e editar</button>
               <button className="button dark" type="button" disabled={!!busy} onClick={submit}>Confirmar envio <Icon name="arrow" /></button>
             </div>
           </>
@@ -176,7 +183,7 @@ export function Workspace({ api, token }: { api: string; token: string }) {
               {mode === "text" ? (
                 <>
                   <label className="field">Texto para análise
-                    <textarea value={text} onChange={event => setText(event.target.value)} maxLength={maxText} rows={7} placeholder="Digite ou cole o texto que você quer investigar." required />
+                    <textarea value={text} onChange={event => setText(event.target.value)} maxLength={maxText} rows={7} required />
                   </label>
                   <p className="field-note">{text.length.toLocaleString("pt-BR")} / 20.000 caracteres</p>
                 </>
@@ -190,43 +197,27 @@ export function Workspace({ api, token }: { api: string; token: string }) {
               )}
               </div>
               <div className="panel-actions">
-                <p className="guide"><Icon name="lock" /> Você revisa antes de confirmar.</p>
-                <button className="button dark" type="submit">Revisar conteúdo <Icon name="arrow" /></button>
+                <button className="button dark" ref={reviewButton} type="submit">Revisar conteúdo <Icon name="arrow" /></button>
               </div>
             </fieldset>
           </form>
         )}
       </section>
-      <aside className="editor-guide" aria-label="Como a análise funciona">
-        <p className="guide-count">{preview ? "02" : report ? "03" : "01"}<small>/03</small></p>
-        <h2>Uma pergunta de cada vez.</h2>
-        <ol>
-          {["Escolha o conteúdo", "Revise a prévia", "Explore o relatório"].map((label, index) => (
-            <li key={label} aria-current={(preview ? 1 : report ? 2 : 0) === index ? "step" : undefined}>
-              <span>0{index + 1}</span>{label}
-            </li>
-          ))}
-        </ol>
-      </aside>
-      </div>
       {report && (
         <section className="workspace-section" aria-labelledby="result">
-          <p className="eyebrow marker">Da dúvida à evidência</p>
           <h2 id="result" ref={resultTitle} tabIndex={-1}>Resultado</h2>
           <ReportBody report={report} />
         </section>
       )}
       <section className="workspace-section" aria-labelledby="history">
-        <p className="eyebrow marker">Seu espaço de investigação</p>
         <div className="section-heading">
-          <h2 id="history">Histórico</h2>
+          <h2 id="history" ref={historyTitle} tabIndex={-1}>Histórico</h2>
           <button type="button" disabled={!!busy} onClick={() => void run("Carregando histórico…", () => loadHistory(0))}>
             <Icon name="clock" /> {history ? "Atualizar histórico" : "Abrir histórico"}
           </button>
         </div>
-        <div className="panel history-panel">
+        {history && <div className="panel history-panel">
         {history?.length === 0 && <p className="empty-state"><Icon name="clock" /> Você ainda não tem análises.</p>}
-        {!history && <p className="empty-state"><Icon name="lock" /> Consulte os relatórios desta conta.</p>}
         {history && history.length > 0 && (
           <ul className="records">
             {history.map(item => (
@@ -257,7 +248,7 @@ export function Workspace({ api, token }: { api: string; token: string }) {
             <button type="button" disabled={!!busy || history.length < pageSize} onClick={() => void run("Carregando histórico…", () => loadHistory(offset + pageSize))}>Próxima</button>
           </nav>
         )}
-        </div>
+        </div>}
       </section>
     </>
   );
@@ -266,38 +257,28 @@ export function Workspace({ api, token }: { api: string; token: string }) {
 function ReportBody({ report }: { report: Report }) {
   return (
     <div className="report-layout">
-      <div className="report-main">
       <div className="panel panel-body report-claims">
       {report.texto_analisado && <details><summary>Texto analisado</summary><p className="content">{report.texto_analisado}</p></details>}
       {report.limitacao && <p className="feedback warning">{report.limitacao}</p>}
       {report.afirmacoes.length === 0 && <p className="empty-state">Nenhuma afirmação verificável foi identificada.</p>}
       {report.afirmacoes.map((claim, index) => (
         <article className="claim" key={index}>
-          <p className="eyebrow">Afirmação {index + 1}</p>
           <h3>{claim.texto}</h3>
           <p className="verdict" data-verdict={claim.classificacao}>{classifications[claim.classificacao]}</p>
           <p>{claim.justificativa}</p>
           {claim.fontes.length > 0 && <p>Fontes: {claim.fontes.map(number => (
-            report.fontes[number - 1] && <a className="reference" key={number} href={`#source-${number}`}>{number}</a>
+            report.fontes[number - 1] && <a className="reference" key={number} href={`#source-${number}`} aria-label={`Fonte ${number}`}>{number}</a>
           ))}</p>}
         </article>
       ))}
       </div>
-      <div className="panel panel-body ai-note">
-        <p className="eyebrow marker">Sobre a autoria</p>
-        <h3>Indícios de conteúdo gerado por IA</h3>
-        <p>{report.indicios_ia || "O relatório não apontou indícios."}</p>
-        <p className="field-note">Indícios não confirmam autoria. Consulte as fontes para avaliar o resultado.</p>
-      </div>
-      </div>
       <aside className="panel panel-body report-sources" aria-label="Fontes e sugestões">
-      <p className="eyebrow marker">Rastreabilidade</p>
       <h3>Fontes</h3>
       {report.fontes.length === 0 && <p className="guide">Nenhuma fonte disponível para este relatório.</p>}
       {report.fontes.length > 0 && (
           <ol className="sources">
             {report.fontes.map((source, index) => (
-              <li id={`source-${index + 1}`} key={index}>
+              <li id={`source-${index + 1}`} key={index} tabIndex={-1}>
                 {/^https?:\/\//i.test(source.url)
                   ? <a href={source.url} target="_blank" rel="noreferrer">{source.titulo} <Icon name="arrow" /></a>
                   : source.titulo}
@@ -312,6 +293,11 @@ function ReportBody({ report }: { report: Report }) {
         />
       )}
       </aside>
+      <div className="panel panel-body ai-note">
+        <h3>Indícios de conteúdo gerado por IA</h3>
+        <p>{report.indicios_ia || "O relatório não apontou indícios."}</p>
+        <p className="field-note">Indícios não confirmam autoria.</p>
+      </div>
     </div>
   );
 }

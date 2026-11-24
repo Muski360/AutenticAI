@@ -11,7 +11,6 @@
   const skipLink = document.querySelector('.skip-link');
   const pages = [...document.querySelectorAll('.app-page')];
   const navButtons = [...document.querySelectorAll('[data-app-nav]')];
-  const breadcrumb = document.getElementById('app-breadcrumb-current');
   const previewDialog = document.getElementById('preview-dialog');
   const processingMask = document.getElementById('processing-mask');
   const toastStack = document.getElementById('toast-stack');
@@ -40,22 +39,20 @@
     moon: {
       claim: 'A Lua emite luz própria.',
       status: 'Contradito', statusStyle: 'danger',
-      explanation: 'A Lua não produz a luz visível que observamos: sua superfície reflete a luz do Sol. Esta justificativa é um exemplo didático, não uma verificação executada pelo protótipo.',
-      sourceTitle: 'NASA — Earth’s Moon',
-      sourceDetail: 'Referência temática ilustrativa que poderia ser consultada em uma análise real. Não acessada nesta sessão.'
+      explanation: 'A superfície da Lua reflete a luz do Sol.',
+      sourceTitle: 'NASA | Lua'
     },
     sun: {
       claim: 'O Sol é uma estrela.',
       status: 'Sustentado', statusStyle: 'success',
-      explanation: 'O Sol é uma estrela localizada no centro do Sistema Solar. Esta justificativa é um exemplo didático, não uma verificação executada pelo protótipo.',
-      sourceTitle: 'NASA — Sun',
-      sourceDetail: 'Referência temática ilustrativa que poderia ser consultada em uma análise real. Não acessada nesta sessão.'
+      explanation: 'O Sol é a estrela no centro do Sistema Solar.',
+      sourceTitle: 'NASA | Sol'
     }
   };
 
   const viewTitles = {
-    overview: 'VISÃO GERAL', new: 'NOVA ANÁLISE', result: 'RELATÓRIO ILUSTRATIVO',
-    history: 'HISTÓRICO', settings: 'CONFIGURAÇÕES'
+    overview: 'Visão geral', new: 'Nova análise', result: 'Relatório de exemplo',
+    history: 'Histórico de exemplo', settings: 'Configurações'
   };
 
   function normalize(text) {
@@ -78,9 +75,8 @@
       if (current) button.setAttribute('aria-current', 'page');
       else button.removeAttribute('aria-current');
     }
-    breadcrumb.textContent = viewTitles[page];
     skipLink.setAttribute('href', '#app-main');
-    document.title = `${viewTitles[page].toLowerCase().replace(/^./, c => c.toUpperCase())} — AutenticAI`;
+    document.title = `${viewTitles[page]} | AutenticAI`;
     if (updateURL && location.hash !== '#app/' + page) history.pushState(null, '', '#app/' + page);
     scrollTop();
     app.querySelector('.app-page:not([hidden]) h1').focus({ preventScroll: true });
@@ -92,7 +88,7 @@
     app.hidden = true;
     document.body.classList.remove('app-active');
     skipLink.setAttribute('href', '#main-content');
-    document.title = 'AutenticAI — Da dúvida à evidência';
+    document.title = 'AutenticAI | Protótipo';
     if (updateURL && location.hash.startsWith('#app/')) history.pushState(null, '', location.pathname + location.search);
     scrollTop();
     if (returningFromApp || updateURL) landing.querySelector('h1').focus({ preventScroll: true });
@@ -188,7 +184,6 @@
       setContentTab('text');
       navigate('new');
       claimText.focus({ preventScroll: true });
-      notify('Exemplo preenchido. Você pode revisar o conteúdo antes de continuar.');
     }
   }
   document.querySelectorAll('[data-fill-sample]').forEach(button => button.addEventListener('click', () => useSample(button.dataset.fillSample)));
@@ -233,8 +228,6 @@
     event.preventDefault();
     pending = gatherInput();
     if (!pending) return;
-    const labels = { text: 'TEXTO SELECIONADO', link: 'ENDEREÇO SELECIONADO', image: 'ARQUIVO SELECIONADO' };
-    document.getElementById('preview-type-label').textContent = labels[pending.type];
     previewText.textContent = pending.text;
     if (pending.type === 'image' && imageObjectURL) {
       previewImage.src = imageObjectURL;
@@ -257,8 +250,8 @@
     const selected = report || {
       claim: pending ? pending.text : 'Conteúdo não analisado',
       status: 'Inconclusivo', statusStyle: 'muted',
-      explanation: 'Nenhuma análise foi executada. Esta é apenas uma visualização do formato que um relatório poderia ter. Para avaliar esta informação, o produto precisaria consultar evidências reais.',
-      sourceTitle: '', sourceDetail: ''
+      explanation: 'O protótipo não analisou este conteúdo.',
+      sourceTitle: ''
     };
     const claimLabel = selected.claim.length > 600 ? selected.claim.slice(0, 600) + '…' : selected.claim;
     document.getElementById('report-claim').textContent = '“' + claimLabel + '”';
@@ -269,10 +262,7 @@
     document.getElementById('report-explanation').textContent = selected.explanation;
     sourceItem.hidden = !isExample;
     document.getElementById('source-title').textContent = selected.sourceTitle;
-    document.getElementById('source-detail').textContent = selected.sourceDetail;
-    document.getElementById('report-sources-intro').textContent = isExample
-      ? 'Este é um exemplo de como referências poderiam ser organizadas. Nenhuma fonte foi acessada para gerar este relatório.'
-      : 'Nenhuma fonte foi consultada nesta demonstração. Este conteúdo permanece sem verificação factual.';
+    document.getElementById('report-empty-sources').hidden = isExample;
   }
 
   document.getElementById('confirm-preview').addEventListener('click', () => {
@@ -289,7 +279,6 @@
       setReport(sample);
       processingMask.hidden = true;
       navigate('result');
-      if (!sample) notify('Exemplo visual aberto. O conteúdo informado não foi analisado.');
     }, window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.body.classList.contains('reduce-motion') ? 150 : 1100);
   });
 
@@ -298,10 +287,9 @@
     const next = reducedToggle.getAttribute('aria-checked') !== 'true';
     reducedToggle.setAttribute('aria-checked', String(next));
     document.body.classList.toggle('reduce-motion', next);
-    notify(next ? 'Animações reduzidas nesta sessão.' : 'Animações visuais reativadas nesta sessão.');
   });
   document.getElementById('clear-demo-button').addEventListener('click', () => {
-    notify('Não há dados de conta ou relatórios pessoais para excluir: tudo é demonstrativo.');
+    notify('O protótipo não salva registros pessoais.');
   });
 
   // Demo paths use browser history but no network requests.

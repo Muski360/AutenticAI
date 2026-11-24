@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:autenticai/analysis_api.dart';
+import 'package:autenticai/identity.dart';
 import 'package:autenticai/main.dart';
 import 'package:autenticai/workspace.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +15,7 @@ final png = base64Decode(
 );
 
 Widget workspace(http.Client client) => MaterialApp(
+  theme: investigationTheme(),
   home: Scaffold(
     body: Workspace(
       api: Uri.parse('https://example.test'),
@@ -26,6 +27,10 @@ Widget workspace(http.Client client) => MaterialApp(
 
 void main() {
   testWidgets('Exibe o nome do AutenticAI ao abrir o app', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 640);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     final semantics = tester.ensureSemantics();
     try {
       await tester.pumpWidget(const AutenticAIApp());
@@ -113,7 +118,14 @@ void main() {
               contains('name="imagem"; filename="print.png"'),
             );
             return http.Response(
-              '{"id":"test","texto_analisado":"Exemplo","afirmacoes":[],"fontes":[]}',
+              jsonEncode({
+                'id': 'test',
+                'texto_analisado': 'Exemplo',
+                'afirmacoes': [],
+                'fontes': [
+                  {'titulo': 'Fonte do exemplo', 'url': 'https://example.test'},
+                ],
+              }),
               201,
             );
           }),
@@ -142,6 +154,17 @@ void main() {
             .first,
       );
       expect(find.text('Resultado'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('1. Fonte do exemplo'),
+        100,
+        scrollable: find
+            .descendant(
+              of: find.byType(ListView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      expect(tester.takeException(), isNull);
     },
   );
 
