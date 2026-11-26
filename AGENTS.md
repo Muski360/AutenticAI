@@ -12,7 +12,7 @@
 
 O AutenticAI é um projeto acadêmico do SENAI para ajudar pessoas a investigar informações. O usuário solicita a análise, revisa o conteúdo e recebe justificativas e fontes disponíveis. Os indícios de conteúdo gerado por IA são separados da verificação factual, sem percentual ou certeza de autoria.
 
-O protótipo em `prototype/` é uma demonstração em HTML, CSS e JavaScript. A pasta `system/backend/` contém a API do Cloudflare Workers, as migrações PostgreSQL e a configuração do Supabase e do Gemini 3.5 Flash com pesquisa. Os clientes planejados usam Next.js, extensão Chrome e Flutter para Android. A API oferece o nível Light. Médio, Alto e Ultra são conceituais.
+O protótipo em `prototype/` é uma demonstração em HTML, CSS e JavaScript. A pasta `system/backend/` contém a API do Cloudflare Workers, as migrações PostgreSQL e as integrações com Supabase, Groq e Tavily. Os clientes usam Next.js, extensão Chrome e Flutter para Android. A API oferece o nível Light. Médio, Alto e Ultra são conceituais.
 
 No Android, sobreposição e captura de tela exigem autorizações distintas. O usuário inicia a captura e confirma o envio; respeite as restrições de telas protegidas. Mantenha segredos no servidor, restrinja o histórico ao usuário e não armazene o print original permanentemente.
 
@@ -38,6 +38,6 @@ Confira as skills e MCPs disponíveis na sessão: podem variar entre ambientes. 
 
 - **Código e revisão:** use `ponytail:ponytail` para mudanças simples e completas; `ponytail:ponytail-review` para revisão de alterações. Para texto, considere `stop-slop`.
 - **Interface:** `frontend-skill` para interfaces visuais; `awwwards-skill` para direção visual ou reformulação substancial; `playwright` para automação pelo terminal. Use a skill apropriada de Figma quando a tarefa envolver Figma.
-- **Documentação técnica:** use o MCP Context7 para consultar documentação atual de bibliotecas e frameworks; confirme comportamento e limitações em fontes oficiais quando necessário, especialmente Android, Gemini, Supabase e Cloudflare.
+- **Documentação técnica:** use o MCP Context7 para consultar documentação atual de bibliotecas e frameworks; confirme comportamento e limitações em fontes oficiais quando necessário, especialmente Android, Groq, Tavily, Supabase e Cloudflare.
 - **Ferramentas externas:** MCP Playwright pode inspecionar e testar páginas; Figma apoia tarefas de design; GitHub apoia tarefas no repositório remoto. Descubra as ferramentas disponíveis antes de usá-las e respeite o escopo solicitado.
 - **Outras necessidades:** consulte o catálogo da sessão para skills de imagem, vídeo, sites ou outros domínios apenas quando forem relevantes. Não publique, envie mensagens ou altere serviços externos sem autorização apropriada.

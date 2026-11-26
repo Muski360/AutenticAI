@@ -1,4 +1,4 @@
-import { analyze, GeminiError } from './gemini.js';
+import { analyze, ProviderError } from './analysis.js';
 
 const MAX_TEXT = 20_000;
 const MAX_IMAGE = 5 * 1024 * 1024;
@@ -44,7 +44,7 @@ export default {
     const authorization = request.headers.get('authorization');
     if (!/^Bearer \S+$/i.test(authorization ?? '')) return json({ erro: 'Entre com sua conta para continuar.' }, 401);
     if (!env.SUPABASE_URL || !env.SUPABASE_PUBLISHABLE_KEY ||
-        (request.method === 'POST' && !env.GEMINI_API_KEY)) {
+        (request.method === 'POST' && (!env.GROQ_API_KEY || !env.TAVILY_API_KEY))) {
       return json({ erro: 'A API ainda precisa das credenciais no ambiente.' }, 503);
     }
 
@@ -112,7 +112,7 @@ export default {
         fontes: row.fontes.map(({ ordem, ...fonte }) => fonte),
       });
     } catch (error) {
-      if (error instanceof InputError || error instanceof GeminiError) return json({ erro: error.message }, error.status);
+      if (error instanceof InputError || error instanceof ProviderError) return json({ erro: error.message }, error.status);
       if (error.name === 'TimeoutError') return json({ erro: 'O serviço não respondeu a tempo. Tente novamente.' }, 504);
       return json({ erro: 'Não foi possível concluir a solicitação.' }, 502);
     }

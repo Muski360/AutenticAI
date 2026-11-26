@@ -268,7 +268,7 @@ class _WorkspaceState extends State<Workspace> {
                         ),
                       const SizedBox(height: 12),
                       const Text(
-                        'Ao confirmar, seu conteúdo será enviado ao Gemini para análise.',
+                        'Ao confirmar, seu conteúdo será enviado à Groq e à Tavily para análise.',
                         style: TextStyle(color: muted),
                       ),
                       const SizedBox(height: 14),

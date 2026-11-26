@@ -14,7 +14,7 @@ Já existem agências e ferramentas de checagem, como Aos Fatos, Agência Lupa e
 
 ## Proposta e limites
 
-O usuário solicitará uma análise de texto ou imagem. O Gemini pesquisará fontes e apresentará justificativas e referências quando disponíveis. O projeto também poderá descrever indícios de conteúdo criado por IA, separadamente da análise factual. Indícios não comprovam autoria, e estudos apontam limitações e erros em detectores de texto [4][5].
+O usuário pode solicitar uma análise de texto ou imagem. A Tavily pesquisa fontes, e a Groq analisa as afirmações com base nos trechos encontrados. O relatório separa a verificação factual dos indícios de conteúdo criado por IA. Indícios não comprovam autoria, e estudos apontam limitações e erros em detectores de texto [4][5].
 
 O projeto acadêmico está em planejamento e não substitui uma checagem profissional. O resultado pode estar errado ou ser inconclusivo. O usuário deve poder consultar as fontes e decidir como interpretar as evidências.
 

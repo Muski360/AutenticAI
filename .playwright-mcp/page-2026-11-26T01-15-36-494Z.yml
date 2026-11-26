@@ -1,0 +1,39 @@
+- generic [ref=f8e1]:
+  - button "Open Next.js Dev Tools" [ref=f8e7] [cursor=pointer]
+  - alert [ref=f8e11]
+  - generic [ref=f8e12]:
+    - link "Pular para o conteúdo" [ref=f8e13] [cursor=pointer]:
+      - /url: "#main-content"
+    - complementary [ref=f8e14]:
+      - link [ref=f8e15] [cursor=pointer]:
+        - /url: "#main-content"
+        - img "AutenticAI" [ref=f8e16]
+      - navigation "Espaço de análise" [ref=f8e17]:
+        - link "Nova análise" [ref=f8e18] [cursor=pointer]:
+          - /url: "#new-analysis"
+        - link "Histórico" [ref=f8e21] [cursor=pointer]:
+          - /url: "#history"
+    - generic [ref=f8e25]:
+      - banner [ref=f8e26]:
+        - button "Sair" [ref=f8e27] [cursor=pointer]
+      - main [ref=f8e28]:
+        - heading "Nova análise" [level=1] [ref=f8e30]
+        - region "Conteúdo para análise" [ref=f8e31]:
+          - group "O que você quer analisar?" [ref=f8e33]:
+            - generic [ref=f8e35]:
+              - generic [ref=f8e36] [cursor=pointer]:
+                - radio "Texto" [checked] [ref=f8e37]
+                - generic [ref=f8e38]: Texto
+              - generic [ref=f8e41] [cursor=pointer]:
+                - radio "Print" [ref=f8e42]
+                - generic [ref=f8e43]: Print
+            - generic [ref=f8e48]:
+              - generic [ref=f8e49]:
+                - text: Texto para análise
+                - textbox "Texto para análise" [active] [ref=f8e50]
+              - paragraph [ref=f8e51]: 0 / 20.000 caracteres
+            - button "Revisar conteúdo" [ref=f8e53] [cursor=pointer]
+        - region "Histórico" [ref=f8e56]:
+          - generic [ref=f8e57]:
+            - heading "Histórico" [level=2] [ref=f8e58]
+            - button "Abrir histórico" [ref=f8e59] [cursor=pointer]

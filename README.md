@@ -1,10 +1,10 @@
 # AutenticAI
 
-O AutenticAI é um projeto acadêmico do SENAI que ajuda a investigar informações encontradas na internet. O usuário envia um conteúdo, e a IA pesquisa fontes e apresenta uma análise com explicações e limitações.
+O AutenticAI é um projeto acadêmico do SENAI que ajuda a investigar informações encontradas na internet. A Tavily pesquisa fontes, e a Groq analisa o conteúdo com base nos trechos encontrados.
 
-O [protótipo visual](prototype/README.md) demonstra os fluxos planejados. A [web](system/web/README.md), a [extensão Chrome](system/extension/README.md) e o [app Android](system/mobile/README.md) têm fluxos de login, análise e histórico integrados à [API](system/backend/README.md). O Supabase tem o provedor Google habilitado e a migração do histórico aplicada. A análise com Gemini real será verificada na entrega.
+O [protótipo visual](prototype/README.md) demonstra os fluxos planejados. A [web](system/web/README.md), a [extensão Chrome](system/extension/README.md) e o [app Android](system/mobile/README.md) usam a mesma [API](system/backend/README.md). O fluxo de análise com Groq e Tavily foi validado na web local com login Google e histórico no Supabase. [Relatório de testes](docs/relatorios_testes/groq_tavily.md)
 
-A [web publicada](https://autenticai-web.muski.workers.dev/) e a [API no Cloudflare](https://autenticai-api.muski.workers.dev/health) usam o Supabase do projeto. O envio para análise ficará disponível após a configuração do Gemini no Worker.
+A [web publicada](https://autenticai-web.muski.workers.dev/) e a [API no Cloudflare](https://autenticai-api.muski.workers.dev/health) usam o Supabase do projeto. A publicação da versão com Groq e Tavily está pendente.
 
 ## Como será usado
 
@@ -22,11 +22,11 @@ Antes de enviar, o usuário poderá revisar o conteúdo. A análise mostrará af
 - **Mobile:** Flutter, com integração nativa Android para a captura de tela.
 - **Extensão:** Chrome, com Manifest V3.
 - **Conta e dados:** login Google pelo Supabase Auth e PostgreSQL no Supabase.
-- **IA:** Gemini 3.5 Flash, com pesquisa de fontes.
+- **Análise e pesquisa:** Groq (`openai/gpt-oss-120b`) e Tavily Search.
 
 ## Níveis de análise
 
-O projeto oferece o nível **Light (Leve)**, configurado com Gemini 3.5 Flash. A Google redireciona esse identificador para o Gemini 3.6 Flash. Em um produto futuro, os níveis **Médio, Alto e Ultra** poderiam oferecer investigações progressivamente mais profundas, demoradas e caras. [Notas da Gemini API](https://aistudio.google.com/docs/changelog#10-08-2026)
+O projeto oferece o nível **Light (Leve)**, com uma busca básica por análise. Os níveis **Médio, Alto e Ultra** são propostas para investigações mais profundas.
 
 ## Documentação
 

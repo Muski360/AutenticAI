@@ -11,7 +11,7 @@ flutter pub get
 flutter run --dart-define-from-file=.env.local
 ```
 
-1. Entre com Google. Use **Abrir histórico** para validar a sessão sem chamar o Gemini.
+1. Entre com Google. Use **Abrir histórico** para validar a sessão no Supabase.
 2. Digite um texto e clique em **Revisar texto**, ou use **Escolher print**. A prévia permite confirmar ou cancelar.
 3. Para capturar outro app, use **Autorizar sobreposição** e permita que o AutenticAI apareça sobre outros apps. Volte e toque em **Ativar botão flutuante**.
 4. Abra a tela desejada, toque em **Capturar** e autorize a captura no diálogo do Android. A prévia aparece no AutenticAI. Use **Cancelar prévia** para testar a captura sem gastar cota.

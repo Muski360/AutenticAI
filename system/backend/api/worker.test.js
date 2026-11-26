@@ -5,7 +5,8 @@ import worker from './worker.js';
 const env = {
   SUPABASE_URL: 'https://project.example',
   SUPABASE_PUBLISHABLE_KEY: 'test-key',
-  GEMINI_API_KEY: 'test-key',
+  GROQ_API_KEY: 'test-key',
+  TAVILY_API_KEY: 'test-key',
   ALLOWED_ORIGINS: 'http://localhost:3000',
 };
 const id = 'e55a346a-0500-4f20-8cb1-53d99d81923d';
@@ -52,18 +53,23 @@ test('analisa texto e imagem, vincula fontes verificáveis e salva o relatório'
   let saved = 0;
   t.mock.method(globalThis, 'fetch', async (url, options) => {
     const { hostname, pathname } = new URL(url);
-    if (hostname === 'generativelanguage.googleapis.com') {
-      assert.match(pathname, /gemini-3\.5-flash:generateContent$/);
+    if (hostname === 'api.tavily.com') {
+      return Response.json({ results: [{ title: 'Fonte', url: 'https://fonte.example/', content: 'A fonte confirma a afirmação.' }] });
+    }
+    if (hostname === 'api.groq.com') {
       const request = JSON.parse(options.body);
-      assert.deepEqual(request.tools, [{ googleSearch: {} }]);
-      assert.deepEqual(request.contents[0].parts, [expectedParts[saved]]);
-      return Response.json({ candidates: [{
-        content: { parts: [{ text: JSON.stringify(grounded) }] },
-        groundingMetadata: {
-          groundingChunks: [{ web: { title: 'Fonte', uri: 'https://fonte.example/' } }],
-          groundingSupports: [{ segment: { text: grounded.afirmacoes[0].justificativa }, groundingChunkIndices: [0] }],
-        },
-      }] });
+      if (saved === 1 && request.model === 'qwen/qwen3.8-27b') {
+        assert.ok(request.messages[1].content[1].image_url.url.endsWith(expectedParts[1].inlineData.data));
+        return Response.json({ choices: [{ finish_reason: 'stop', message: { content: grounded.texto_analisado } }] });
+      }
+      const input = saved ? grounded.texto_analisado : expectedParts[0].text;
+      return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({
+        indicios_ia: null, limitacao: null, afirmacoes: [
+          { texto: input, classificacao: 'sustentada', justificativa: 'A fonte confirma a afirmação.', fontes: [1] },
+          { texto: input, classificacao: 'contradita', justificativa: 'Resposta sem citação.', fontes: [99] },
+          { texto: 'A fonte confirma a afirmação.', classificacao: 'sustentada', justificativa: 'Trecho da fonte.', fontes: [1] },
+        ],
+      }) } }] });
     }
     assert.equal(options.headers.authorization, token.authorization);
     if (pathname === '/auth/v1/user') return Response.json(googleUser);
@@ -71,6 +77,7 @@ test('analisa texto e imagem, vincula fontes verificáveis e salva o relatório'
     const { relatorio } = JSON.parse(options.body);
     assert.equal(relatorio.texto_analisado, saved ? grounded.texto_analisado : 'Texto enviado.');
     assert.deepEqual(relatorio.fontes, [{ titulo: 'Fonte', url: 'https://fonte.example/' }]);
+    assert.equal(relatorio.afirmacoes.length, 2);
     assert.deepEqual(relatorio.afirmacoes[0].fontes, [1]);
     assert.equal(relatorio.afirmacoes[1].classificacao, 'inconclusiva');
     assert.ok(!options.body.includes('iVBORw0KGgo='));

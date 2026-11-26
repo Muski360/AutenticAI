@@ -14,14 +14,14 @@ Ao terminar uma etapa, atualize seu estado, anote o que testou e indique a próx
 
 ## 2. Entregar o fluxo web
 
-**Implementação web disponível para teste local.** O provedor Google está habilitado. O teste ao vivo da análise com Gemini fica para a entrega.
+**Fluxo web validado localmente.** O login Google, o envio para análise com Groq e Tavily e a consulta do relatório salvo no Supabase passaram. [Relatório de testes](docs/relatorios_testes/groq_tavily.md)
 
 1. Implementar login Google pelo Supabase Auth, retorno OAuth, recuperação de sessão e logout. Configurar o cliente OAuth e as URLs de retorno de desenvolvimento. Conferir a [configuração oficial do Google no Supabase](https://supabase.com/docs/guides/auth/social-sign-in/auth-google).
 2. Criar a entrada por texto ou print, com prévia, aviso de envio ao serviço de IA, confirmação e cancelamento. Enviar o token de acesso ao Worker. Respeitar os limites de 20.000 caracteres e 5 MiB e os formatos PNG, JPEG e WebP.
-3. Mostrar afirmações, classificação, justificativas e fontes. Exibir os indícios de geração por IA em seção própria, sem porcentagem ou certeza de autoria. Tratar processamento, falta de evidência, sessão expirada e falhas dos provedores. Seguir as regras de apresentação das sugestões do Google quando houver.
+3. Mostrar afirmações, classificação, justificativas e fontes. Exibir os indícios de geração por IA em seção própria, sem porcentagem ou certeza de autoria. Tratar processamento, falta de evidência, sessão expirada e falhas dos provedores.
 4. Implementar lista, detalhe e exclusão do histórico usando a API. Testar texto e print com respostas simuladas. Conferir o fluxo com teclado e em tela estreita e verificar o isolamento entre contas no Supabase.
 
-**Pronto para avançar quando** o login e o acesso ao histórico funcionam com uma conta real, e texto e print passam nos testes simulados da interface. O teste pago fica na etapa 5.
+**Pronto para avançar quando** o login e o acesso ao histórico funcionam com uma conta real, e texto e print passam nos testes simulados da interface.
 
 **Verificação local.** O teste no Chrome com serviços simulados cobriu retorno OAuth com PKCE, sessão após recarregar, prévia e cancelamento, texto e print, erro de cota com nova tentativa, fontes, histórico e logout. Foi executado em uma janela de 320 px.
 
@@ -37,7 +37,7 @@ Ao terminar uma etapa, atualize seu estado, anote o que testou e indique a próx
 2. Solicitar acesso à aba ativa quando a pessoa iniciar a ação. Ler seu texto, mostrar a prévia e enviar apenas após confirmação. Explicar quando a página for protegida, estiver sem texto ou exceder o limite.
 3. Mostrar o resultado e o histórico da conta. Carregar a extensão descompactada e testar login, página comum, página restrita, cancelamento, análise e exclusão.
 
-**Pronto para avançar quando** o login Google e o histórico abrirem na extensão carregada. A análise pode ser simulada nesta etapa. O teste pago fica na entrega.
+**Pronto para avançar quando** o login Google e o histórico abrirem na extensão carregada. A análise pode ser simulada nesta etapa.
 
 **Verificação local.** O build carregou no Chrome. Os testes no Chromium cobriram PKCE e recuperação da sessão com retorno simulado, bloqueio de aba, prévia, cancelamento, erro de cota, fontes, histórico e logout. O Supabase real iniciou o fluxo OAuth, e o Worker aceitou a origem local da extensão.
 
@@ -62,13 +62,13 @@ Ao terminar uma etapa, atualize seu estado, anote o que testou e indique a próx
 
 1. Aplicar a [identidade visual](docs/IDENTIDADE_VISUAL.md) à web, à extensão e ao Android após fechar os fluxos funcionais. Conferir contraste, teclado, toque e telas estreitas.
 2. Publicar a web e o Worker no Cloudflare. Configurar segredos no Worker, HTTPS, origens permitidas e URLs de retorno nos provedores. Gerar o APK de demonstração e preparar a pasta da extensão para carregamento descompactado.
-3. Testar login e histórico com duas contas e verificar os fluxos das três plataformas com análises simuladas. Conferir falhas de rede, permissões Android e ausência de armazenamento permanente de prints. Quando houver saldo e cota, fazer **uma única análise real de uma frase curta**, com pesquisa habilitada e sem repetição automática. Conferir resposta, gravação no histórico e exclusão.
+3. Testar login e histórico com duas contas e verificar os fluxos das três plataformas. Conferir falhas de rede, permissões Android e ausência de armazenamento permanente de prints. Após publicar a integração, usar uma frase curta para validar análise, consulta e exclusão do registro com as cotas gratuitas.
 4. Atualizar os guias com as instruções de instalação e execução, as limitações conhecidas e um roteiro de demonstração. Registrar os resultados dos testes e as versões entregues.
 
-**Verificação visual local.** A web passou no lint, no build e nos testes de navegador entre 320 e 1440 px, com teclado e movimento reduzido. A extensão Manifest V3 passou no build e no teste do painel em 320 e 360 px. O Android passou na análise estática e nos quatro testes Flutter. No emulador Android 16, validei por toque o editor, a prévia, o cancelamento, o resultado com fontes e o histórico. Os fluxos usaram dados simulados, sem chamadas ao Gemini.
+**Verificação visual local.** A web passou no lint, no build e nos testes de navegador entre 320 e 1440 px, com teclado e movimento reduzido. A extensão Manifest V3 passou no build e no teste do painel em 320 e 360 px. O Android passou na análise estática e nos quatro testes Flutter. No emulador Android 16, validei por toque o editor, a prévia, o cancelamento, o resultado com fontes e o histórico. Os fluxos usaram dados simulados.
 
-**Verificação publicada.** A abertura, os recursos estáticos e a página 404 passaram no navegador. A API respondeu `200` em `/health`, `204` no preflight da web e da extensão, `403` para origem externa, `401` para sessão ausente ou inválida e `503` no teste de análise com corpo vazio. No Supabase, confirmei a migração, o RLS do histórico e a URL de retorno. O redirecionamento para o Google foi real. O retorno OAuth, a sessão após recarga, o histórico e a saída passaram no build publicado com respostas simuladas. A análise pelo Gemini fica para o teste pago final.
+**Verificação publicada.** A abertura, os recursos estáticos e a página 404 passaram no navegador. A API respondeu `200` em `/health`, `204` no preflight da web e da extensão, `403` para origem externa, `401` para sessão ausente ou inválida e `503` no teste de análise com corpo vazio. No Supabase, confirmei a migração, o RLS do histórico e a URL de retorno. O redirecionamento para o Google foi real. O retorno OAuth, a sessão após recarga, o histórico e a saída passaram no build publicado com respostas simuladas.
 
-**Próxima ação.** Confirmar o login Google com uma conta real na web publicada, recarregar a página e abrir o histórico.
+**Próxima ação.** Publicar a integração Groq e Tavily no Cloudflare e repetir a análise de uma frase curta na web publicada.
 
 **Pronto quando** outra pessoa consegue instalar ou abrir as três interfaces e executar a demonstração seguindo o README.

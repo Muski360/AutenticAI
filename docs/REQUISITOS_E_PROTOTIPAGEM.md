@@ -15,7 +15,7 @@ flowchart TD
     C --> F[Revisar prévia]
     D --> F
     E --> F
-    F -->|Confirmar| G[Analisar com Gemini e pesquisar fontes]
+    F -->|Confirmar| G[Pesquisar com Tavily e analisar com Groq]
     F -->|Cancelar| B
     G --> H[Mostrar resultado ou erro]
     H --> I[Consultar ou excluir no histórico]

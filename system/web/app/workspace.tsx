@@ -161,7 +161,7 @@ export function Workspace({ api, token }: { api: string; token: string }) {
             {"text" in preview
               ? <p className="content preview-text">{preview.text}</p>
               : <Image className="preview" src={preview.url} alt="Print selecionado para análise" width={640} height={480} unoptimized />}
-            <p className="guide"><Icon name="lock" /> Você envia o conteúdo ao Gemini ao confirmar. O histórico privado guarda o texto e o relatório.</p>
+            <p className="guide"><Icon name="lock" /> Ao confirmar, você envia o conteúdo à Groq e à Tavily. O histórico privado guarda o texto e o relatório.</p>
             </div>
             <div className="panel-actions">
               <button type="button" disabled={!!busy} onClick={() => {

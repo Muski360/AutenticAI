@@ -9,7 +9,8 @@ flowchart LR
     W[Web: Next.js] --> API[API: Cloudflare Worker]
     C[Extensão Chrome] --> API
     A[Android: Flutter] --> API
-    API --> G[Gemini 3.5 Flash e pesquisa Google]
+    API --> G[Groq: transcrição e análise]
+    API --> T[Tavily: pesquisa de fontes]
     API --> DB[(PostgreSQL no Supabase)]
     W --> AUTH[Supabase Auth: Google]
     C --> AUTH
@@ -17,17 +18,17 @@ flowchart LR
     API --> AUTH
 ```
 
-A web Next.js é exportada como arquivos estáticos e servida por um Worker. O Worker da API valida a sessão, consulta o histórico no Supabase e, quando configurado, chama o Gemini e registra os resultados. A chave do Gemini é um segredo do Worker da API. [Publicação da web](../system/web/README.md#publicação-no-cloudflare) · [Publicação da API](../system/backend/README.md#publicação-no-cloudflare)
+A web Next.js é exportada como arquivos estáticos e servida por um Worker. O Worker da API valida a sessão, chama Groq e Tavily e grava o relatório no Supabase. As duas chaves de API ficam no Worker. [Publicação da web](../system/web/README.md#publicação-no-cloudflare) · [Publicação da API](../system/backend/README.md#publicação-no-cloudflare)
 
 ## Fluxo de análise
 
 1. O usuário entra com sua conta Google e seleciona o conteúdo na web, na extensão ou no Android.
 2. O cliente mostra uma prévia e pede confirmação antes do envio. Web e Android aceitam texto digitado ou print escolhido. O Android também aceita um print capturado com autorização, e a extensão extrai texto da página ativa.
-3. O Worker valida a sessão e a entrada e envia o conteúdo à Gemini API com pesquisa Google habilitada. A configuração usa `gemini-3.5-flash`, que o Google redireciona para o 3.6 Flash. As fontes vêm dos metadados da pesquisa. [Notas da Gemini API](https://aistudio.google.com/docs/changelog#10-08-2026)
-4. O resultado apresenta afirmações, justificativas e fontes disponíveis. Se a pesquisa falhar ou não houver evidências suficientes, informa a limitação ou apresenta resultado inconclusivo.
+3. O Worker valida a sessão e a entrada. Para um print, a Groq transcreve a imagem com `qwen/qwen3.8-27b`. A Tavily faz uma busca básica com os primeiros 400 caracteres e retorna até cinco fontes. A Groq analisa o texto e os trechos retornados com `openai/gpt-oss-120b`.
+4. O resultado apresenta até cinco afirmações com justificativas e referências aos links da Tavily. Quando faltam evidências, o relatório informa a limitação ou classifica a afirmação como inconclusiva. Se um provedor falhar, a API retorna uma mensagem de erro.
 5. O histórico salva o texto enviado ou extraído da imagem, o resultado e as fontes, vinculados ao usuário. O print original não é armazenado permanentemente. Cada usuário pode consultar e excluir seus próprios registros.
 
-O usuário vê o conteúdo que será enviado ao provedor de IA e confirma a operação. Dados enviados e resultados podem conter informações pessoais: o acesso ao histórico deve ser restrito ao dono, inclusive no banco de dados. Usar HTTPS, validar entradas e não registrar conteúdo sensível em logs. Cotas, custos e disponibilidade da pesquisa dependem do plano e das condições atuais do provedor.
+O usuário revisa o conteúdo e confirma o envio. O banco restringe o histórico à conta que criou o relatório. As cotas da Groq e da Tavily limitam a quantidade de análises. Uma busca pelos primeiros 400 caracteres pode deixar afirmações posteriores sem evidências.
 
 O modelo de dados do histórico está no [diagrama entidade-relacionamento](DER.md).
 
@@ -44,11 +45,11 @@ A captura não fica ativa continuamente. Detalhes e requisitos variam com a vers
 
 ## Resultado e níveis de análise
 
-A verificação factual e os indícios de conteúdo gerado por IA aparecem em seções separadas. O Gemini pode descrever sinais observados, mas não é um detector de autoria validado: não apresentar porcentagem, certeza ou ausência de sinais como prova de origem humana.
+A verificação factual e os indícios de conteúdo gerado por IA aparecem em seções separadas. A Groq pode descrever sinais observados. Esses sinais não comprovam autoria e não são apresentados em porcentagem.
 
 | Nível | Situação | Ideia para profundidade, tempo e custo |
 |---|---|---|
-| **Light (Leve)** | Nível da API, configurado com Gemini 3.5 Flash | Análise inicial com pesquisa de fontes. |
+| **Light (Leve)** | Nível da API, com Groq e Tavily | Análise inicial com uma busca de fontes. |
 | **Médio** | Visão futura | Investigação mais ampla que a Light. |
 | **Alto** | Visão futura | Investigação mais aprofundada, com maior tempo e custo. |
 | **Ultra** | Visão futura | Investigação mais extensa, com maior tempo e custo previstos. |
@@ -58,6 +59,6 @@ Os níveis futuros não têm modelos ou recursos contratados e não garantem mai
 ## Referências técnicas
 
 - [Captura de tela no Android](https://developer.android.com/media/grow/media-projection)
-- [Pesquisa Google com Gemini](https://ai.google.dev/gemini-api/docs/google-search)
+- [Groq GPT-OSS 120B](https://console.groq.com/docs/model/openai/gpt-oss-120b) e [Tavily Search](https://docs.tavily.com/documentation/api-reference/endpoint/search)
 - [Exportação estática do Next.js](https://nextjs.org/docs/app/guides/static-exports) e [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)
 - [Login Google no Supabase](https://supabase.com/docs/guides/auth/social-login/auth-google)
