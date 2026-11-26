@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import 'analysis_api.dart';
 import 'identity.dart';
@@ -541,9 +540,6 @@ class ReportView extends StatelessWidget {
                 else
                   Text('${index + 1}. ${source['titulo']}'),
               ],
-              if (report['sugestoes_google'] case final String html
-                  when html.isNotEmpty)
-                SearchSuggestions(key: ValueKey(html), html: html),
             ],
           ),
         ),
@@ -573,45 +569,4 @@ class ReportView extends StatelessWidget {
       ],
     );
   }
-}
-
-class SearchSuggestions extends StatefulWidget {
-  const SearchSuggestions({super.key, required this.html});
-  final String html;
-
-  @override
-  State<SearchSuggestions> createState() => _SearchSuggestionsState();
-}
-
-class _SearchSuggestionsState extends State<SearchSuggestions> {
-  late final WebViewController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.disabled)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onNavigationRequest: (request) {
-            final url = Uri.tryParse(request.url);
-            if (url != null &&
-                url.isScheme('https') &&
-                ['www.google.com', 'www.google.com.br'].contains(url.host)) {
-              unawaited(launchUrl(url, mode: LaunchMode.externalApplication));
-            }
-            return NavigationDecision.prevent;
-          },
-        ),
-      )
-      ..loadHtmlString("""
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data: https:; base-uri 'none'; form-action 'none'">
-${widget.html}
-""");
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      SizedBox(height: 136, child: WebViewWidget(controller: controller));
 }

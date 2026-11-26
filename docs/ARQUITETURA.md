@@ -2,7 +2,9 @@
 
 ## Objetivo e escopo
 
-O AutenticAI é um projeto acadêmico de análise de informações. A API e a migração do banco estão em `system/backend/`. O projeto remoto do Supabase já tem o esquema inicial do histórico. Os clientes usam Supabase Auth com PKCE e enviam o token de acesso ao Worker. A extensão usa `activeTab` para ler o texto após solicitação. O Android usa `MediaProjection` para a captura iniciada pelo botão flutuante. [Guia do backend](../system/backend/README.md)
+O AutenticAI é um projeto acadêmico de análise de informações. A API e a migração do banco estão em `system/backend/`. O projeto remoto do Supabase já tem o esquema inicial do histórico. Os clientes usam Supabase Auth com PKCE e enviam o token de acesso ao Worker. A extensão usa `activeTab` para ler o texto após solicitação. O Android usa `MediaProjection` para a captura iniciada pelo botão flutuante.
+
+Em desenvolvimento, o Worker e os três clientes usam `system/backend/.env.local`. Os clientes recebem apenas os endereços e a chave publicável do Supabase. As chaves da Groq e da Tavily ficam no Worker. [Guia do backend](../system/backend/README.md)
 
 ```mermaid
 flowchart LR

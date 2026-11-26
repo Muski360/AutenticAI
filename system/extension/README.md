@@ -2,7 +2,7 @@
 
 Extensão em Manifest V3 para entrar com Google, analisar o texto da aba ativa e consultar o histórico.
 
-1. Em `system/extension/`, copie `.env.example` para `.env.local`. Configure a URL e a chave publicável do Supabase e o endereço da API. Execute `npm ci` e `npm run build`.
+1. Prepare a [configuração compartilhada](../backend/README.md#configuração). Em `system/extension/`, execute `npm ci` e `npm run build`. Repita o build e recarregue a extensão após mudar o endereço da API.
 2. Em `chrome://extensions`, ative o **Modo do desenvolvedor**, clique em **Carregar sem compactação** e selecione `system/extension/dist/`.
 3. Abra uma página comum da web. No painel do AutenticAI, entre com Google. Se o painel fechar ao abrir o login, reabra após concluir.
 4. Clique em **Ler texto da aba** e revise a prévia. A confirmação aciona a análise. Para testar apenas a sessão, use **Abrir histórico**.

@@ -43,9 +43,11 @@ export default {
 
     const authorization = request.headers.get('authorization');
     if (!/^Bearer \S+$/i.test(authorization ?? '')) return json({ erro: 'Entre com sua conta para continuar.' }, 401);
-    if (!env.SUPABASE_URL || !env.SUPABASE_PUBLISHABLE_KEY ||
-        (request.method === 'POST' && (!env.GROQ_API_KEY || !env.TAVILY_API_KEY))) {
-      return json({ erro: 'A API ainda precisa das credenciais no ambiente.' }, 503);
+    if (!env.SUPABASE_URL || !env.SUPABASE_PUBLISHABLE_KEY) {
+      return json({ erro: 'A API ainda precisa das credenciais do Supabase.' }, 503);
+    }
+    if (request.method === 'POST' && (!env.GROQ_API_KEY?.trim() || !env.TAVILY_API_KEY?.trim())) {
+      return json({ erro: 'Configure as chaves da Groq e da Tavily no backend para fazer análises.' }, 503);
     }
 
     const supabase = (path, options = {}) => fetch(new URL(path, env.SUPABASE_URL), {
@@ -65,11 +67,10 @@ export default {
       if (request.method === 'POST') {
         const input = await readInput(request);
         const report = await analyze(env, input);
-        const { sugestoes_google, ...history } = report;
         const saved = await supabase('/rest/v1/rpc/salvar_analise', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ relatorio: history }),
+          body: JSON.stringify({ relatorio: report }),
         });
         if (!saved.ok) return json({ erro: 'Não foi possível salvar a análise.' }, 502);
         return json({ id: await saved.json(), ...report }, 201);

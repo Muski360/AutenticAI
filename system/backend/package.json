@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --env-file .env.local",
     "test": "node --test",
-    "smoke": "node --env-file=.env checks/smoke.js",
+    "smoke": "node --env-file=.env.local checks/smoke.js",
     "check": "wrangler deploy --dry-run"
   },
   "devDependencies": {

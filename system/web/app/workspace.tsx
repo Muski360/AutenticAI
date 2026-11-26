@@ -14,7 +14,6 @@ type Report = Pick<Summary, "id" | "texto_analisado"> & {
   fontes: { titulo: string; url: string }[];
   indicios_ia: string | null;
   limitacao: string | null;
-  sugestoes_google?: string | null;
 };
 type Input = { text: string } | { file: File; url: string };
 const pageSize = 20;
@@ -285,12 +284,6 @@ function ReportBody({ report }: { report: Report }) {
               </li>
             ))}
           </ol>
-      )}
-      {report.sugestoes_google && (
-        <iframe title="Sugestões de pesquisa do Google" sandbox="allow-popups allow-popups-to-escape-sandbox"
-          referrerPolicy="no-referrer"
-          srcDoc={`<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data: https:; base-uri 'none'; form-action 'none'"><base target="_blank">${report.sugestoes_google}`}
-        />
       )}
       </aside>
       <div className="panel panel-body ai-note">

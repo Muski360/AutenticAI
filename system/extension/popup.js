@@ -169,14 +169,6 @@ function showReport(report) {
     empty.className = "muted";
     sourcesSection.append(empty);
   }
-  if (report.sugestoes_google) {
-    const frame = element("iframe");
-    frame.title = "Sugestões de pesquisa do Google";
-    frame.setAttribute("sandbox", "allow-popups allow-popups-to-escape-sandbox");
-    frame.referrerPolicy = "no-referrer";
-    frame.srcdoc = '<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src data: https:; base-uri \'none\'; form-action \'none\'"><base target="_blank">' + report.sugestoes_google;
-    sourcesSection.append(frame);
-  }
   body.append(sourcesSection);
   const authorship = element("div");
   authorship.className = "authorship";

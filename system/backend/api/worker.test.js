@@ -6,8 +6,8 @@ import { analyze } from './analysis.js';
 const env = {
   SUPABASE_URL: 'https://project.example',
   SUPABASE_PUBLISHABLE_KEY: 'test-key',
-  GROQ_API_KEY: 'test-key',
-  TAVILY_API_KEY: 'test-key',
+  GROQ_API_KEY: 'test-groq-key',
+  TAVILY_API_KEY: 'test-tavily-key',
   ALLOWED_ORIGINS: 'http://localhost:3000',
 };
 const id = 'e55a346a-0500-4f20-8cb1-53d99d81923d';
@@ -73,9 +73,11 @@ test('analisa texto e imagem, vincula fontes verificáveis e salva o relatório'
   t.mock.method(globalThis, 'fetch', async (url, options) => {
     const { hostname, pathname } = new URL(url);
     if (hostname === 'api.tavily.com') {
+      assert.equal(options.headers.authorization, `Bearer ${env.TAVILY_API_KEY}`);
       return Response.json({ results: [{ title: 'Fonte', url: 'https://fonte.example/', content: 'A fonte confirma a afirmação.' }] });
     }
     if (hostname === 'api.groq.com') {
+      assert.equal(options.headers.authorization, `Bearer ${env.GROQ_API_KEY}`);
       const request = JSON.parse(options.body);
       if (saved === 1 && request.model === 'qwen/qwen3.8-27b') {
         assert.ok(request.messages[1].content[1].image_url.url.endsWith(expectedParts[1].inlineData.data));
@@ -141,4 +143,21 @@ test('consulta e exclui análises pelo token do usuário', async t => {
   assert.deepEqual((await item.json()).afirmacoes[0].fontes, [2]);
   const deletion = await worker.fetch(new Request(`${url}/${id}`, { method: 'DELETE', headers: token }), env);
   assert.equal(deletion.status, 204);
+});
+
+test('exige as duas chaves de análise e mantém o histórico disponível sem elas', async t => {
+  const fetchMock = t.mock.method(globalThis, 'fetch', async url => {
+    assert.equal(new URL(url).origin, env.SUPABASE_URL);
+    return Response.json(new URL(url).pathname === '/auth/v1/user' ? googleUser : []);
+  });
+  for (const key of ['GROQ_API_KEY', 'TAVILY_API_KEY']) {
+    const response = await worker.fetch(postText('Texto enviado.'), { ...env, [key]: '' });
+    assert.equal(response.status, 503);
+  }
+  assert.equal(fetchMock.mock.callCount(), 0);
+  const history = await worker.fetch(new Request('https://worker.example/analises', { headers: token }), {
+    ...env, GROQ_API_KEY: '', TAVILY_API_KEY: '',
+  });
+  assert.equal(history.status, 200);
+  assert.deepEqual(await history.json(), []);
 });

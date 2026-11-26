@@ -13,7 +13,6 @@ dependencies:
   http_parser: ^4.1.2
   supabase_flutter: ^2.18.3
   url_launcher: ^6.3.3
-  webview_flutter: ^4.14.1
 
 dev_dependencies:
   flutter_test:

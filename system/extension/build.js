@@ -1,7 +1,8 @@
 import { build } from "esbuild";
 import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { clientConfig } from "../client-config.mjs";
 
-const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, API_URL } = process.env;
+const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, API_URL } = clientConfig();
 const supabase = new URL(SUPABASE_URL || "");
 const api = new URL(API_URL || "");
 if (supabase.protocol !== "https:" || !SUPABASE_PUBLISHABLE_KEY?.startsWith("sb_publishable_")) {

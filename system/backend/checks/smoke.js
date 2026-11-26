@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 
 const api = 'http://127.0.0.1:8787';
 const { ALLOWED_ORIGINS, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } = process.env;
-const origin = ALLOWED_ORIGINS?.split(',').map(value => value.trim()).find(Boolean);
+const origins = (ALLOWED_ORIGINS ?? '').split(',').map(value => value.trim()).filter(Boolean);
 
-assert.ok(origin, 'Defina ALLOWED_ORIGINS no .env.');
-assert.ok(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY, 'Configure o Supabase no .env.');
+assert.ok(origins.length, 'Defina ALLOWED_ORIGINS em .env.local.');
+assert.ok(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY, 'Configure o Supabase em .env.local.');
 
 function request(url, options) {
   return fetch(url, { signal: AbortSignal.timeout(15_000), ...options });
@@ -15,12 +15,14 @@ const health = await request(`${api}/health`);
 assert.equal(health.status, 200, 'O Worker local deve responder em /health.');
 assert.deepEqual(await health.json(), { status: 'ok' });
 
-const preflight = await request(`${api}/analises`, {
-  method: 'OPTIONS',
-  headers: { origin, 'access-control-request-method': 'POST' },
-});
-assert.equal(preflight.status, 204, 'O Worker deve aceitar o preflight da origem configurada.');
-assert.equal(preflight.headers.get('access-control-allow-origin'), origin);
+for (const origin of origins) {
+  const preflight = await request(`${api}/analises`, {
+    method: 'OPTIONS',
+    headers: { origin, 'access-control-request-method': 'POST' },
+  });
+  assert.equal(preflight.status, 204, `O Worker deve aceitar a origem ${origin}.`);
+  assert.equal(preflight.headers.get('access-control-allow-origin'), origin);
+}
 
 const anonymous = await request(`${api}/analises`);
 assert.equal(anonymous.status, 401, 'O histórico deve exigir autenticação.');

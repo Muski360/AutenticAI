@@ -8,8 +8,10 @@ Execute os comandos abaixo em `system/backend/`.
 
 1. Entre com `npx supabase login` e vincule o ambiente com `npx supabase link --project-ref REF_DO_PROJETO`. O projeto remoto AutenticAI já tem o esquema inicial. Para aplicar migrações pendentes ao projeto vinculado, rode `npx supabase db push --remote --dry-run` e depois `npx supabase db push --remote`. [Migração SQL](supabase/migrations/20261119000000_historico.sql)
 2. Configure o provedor Google no Supabase Auth com o ID e o segredo de um cliente OAuth do Google. Cadastre no Google a URL de callback mostrada pelo Supabase e autorize no Supabase a URL de retorno do cliente. [Guia de login Google](https://supabase.com/docs/guides/auth/social-login/auth-google)
-3. Copie `.env.example` para `.env` e preencha `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `GROQ_API_KEY` e `TAVILY_API_KEY`. Ajuste `ALLOWED_ORIGINS` com as origens web e da extensão, separadas por vírgula. Mantenha as chaves da Groq e da Tavily no backend.
-4. Execute `npm ci` e `npm run dev -- --env-file .env`. A API local usa `http://localhost:8787`. Rode `npm test` para verificar o fluxo com respostas simuladas e `npm run check` para conferir o pacote do Worker.
+3. Use o Node.js 22 ou superior e copie [.env.example](.env.example) para `system/backend/.env.local` se o arquivo ainda não existir. Preencha `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `GROQ_API_KEY` e `TAVILY_API_KEY`. Ajuste `ALLOWED_ORIGINS` com as origens web e da extensão, separadas por vírgula.
+4. Execute `npm ci` e `npm run dev`. A API local usa `http://localhost:8787`. Reinicie o Worker após alterar as chaves. Rode `npm test` para verificar o fluxo com respostas simuladas e `npm run check` para conferir o pacote do Worker.
+
+O `system/backend/.env.local` é a configuração local da API, da web, da extensão e do Android. Os clientes recebem a URL da API e os dados públicos do Supabase. As chaves da Groq e da Tavily ficam no Worker. `API_URL` define o endereço que os clientes acessam e aceita a URL HTTPS do Worker publicado. Para um aparelho físico com `adb reverse`, defina também `ANDROID_API_URL=http://127.0.0.1:8787`. O emulador usa `10.0.2.2` quando o endereço compartilhado aponta para o computador local.
 
 Com o Worker local em execução, use `npm run smoke` em outro terminal. O comando verifica saúde, CORS, rejeição de sessão ausente ou inválida e conexão com o Supabase. Ele também informa se o login Google está habilitado. O envio real é testado pela interface web. [Relatório de testes](../../docs/relatorios_testes/groq_tavily.md)
 

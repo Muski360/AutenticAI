@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node --env-file=.env.local build.js"
+    "build": "node build.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.119.2"
