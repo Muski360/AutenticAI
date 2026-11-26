@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import worker from './worker.js';
+import { analyze } from './analysis.js';
 
 const env = {
   SUPABASE_URL: 'https://project.example',
@@ -26,6 +27,24 @@ const grounded = {
     { texto: 'Outra afirmação.', classificacao: 'contradita', justificativa: 'Resposta sem citação.' },
   ],
 };
+
+test('preserva a quebra de linha original e rejeita afirmações parafraseadas', async t => {
+  t.mock.method(globalThis, 'fetch', async url => {
+    if (new URL(url).hostname === 'api.tavily.com') {
+      return Response.json({ results: [{ title: 'Fonte', url: 'https://fonte.example/', content: 'Texto de apoio.' }] });
+    }
+    return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({
+      indicios_ia: null, limitacao: null, afirmacoes: [
+        { texto: 'Uma frase em duas linhas.', classificacao: 'sustentada', justificativa: 'Fonte.', fontes: [1] },
+        { texto: 'Uma frase inventada.', classificacao: 'sustentada', justificativa: 'Fonte.', fontes: [1] },
+      ],
+    }) } }] });
+  });
+  const result = await analyze(env, { text: 'Uma frase em\nduas linhas.' });
+  assert.equal(result.afirmacoes[0].texto, 'Uma frase em\nduas linhas.');
+  assert.equal(result.afirmacoes.length, 1);
+  assert.match(result.limitacao, /não puderam ser vinculadas/);
+});
 
 test('exige uma sessão e valida a origem antes de consultar serviços', async t => {
   const fetchMock = t.mock.method(globalThis, 'fetch', async () => new Response(null, { status: 401 }));

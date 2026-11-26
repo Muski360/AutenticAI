@@ -112,6 +112,9 @@ export default {
         fontes: row.fontes.map(({ ordem, ...fonte }) => fonte),
       });
     } catch (error) {
+      if (error instanceof ProviderError && error.retryAfter !== null) {
+        return Response.json({ erro: error.message }, { status: error.status, headers: { ...headers, 'retry-after': String(error.retryAfter), 'access-control-expose-headers': 'Retry-After' } });
+      }
       if (error instanceof InputError || error instanceof ProviderError) return json({ erro: error.message }, error.status);
       if (error.name === 'TimeoutError') return json({ erro: 'O serviço não respondeu a tempo. Tente novamente.' }, 504);
       return json({ erro: 'Não foi possível concluir a solicitação.' }, 502);
