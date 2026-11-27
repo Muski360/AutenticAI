@@ -1,12 +1,16 @@
 import { readFileSync } from 'node:fs';
 import { parseEnv } from 'node:util';
 
-let local = {};
-try {
-  local = parseEnv(readFileSync(new URL('./backend/.env.local', import.meta.url), 'utf8'));
-} catch (error) {
-  if (error.code !== 'ENOENT') throw error;
+function readLocalEnv(name) {
+  try {
+    return parseEnv(readFileSync(new URL(`./backend/${name}`, import.meta.url), 'utf8'));
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    return {};
+  }
 }
+
+const local = { ...readLocalEnv('.env'), ...readLocalEnv('.env.local') };
 
 export function clientConfig(overrides = {}) {
   const key = overrides.SUPABASE_PUBLISHABLE_KEY ?? local.SUPABASE_PUBLISHABLE_KEY ?? '';

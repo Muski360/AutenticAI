@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { passwordAuth } from "../password-auth.mjs";
 
 const storage = chrome.storage.local;
 const trustedStorage = storage.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" });
@@ -18,16 +19,35 @@ let signingIn;
 
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (sender.url !== chrome.runtime.getURL("popup.html")) return;
-  handleAuth(message?.type).then(data => respond({ data }), error => {
+  handleAuth(message).then(data => respond({ data }), error => {
     respond({ error: error.message || "Não foi possível confirmar a sessão." });
   });
   return true;
 });
 
-async function handleAuth(type) {
-  if (type === "login") {
-    signingIn ??= login().finally(() => { signingIn = undefined; });
-    await signingIn;
+async function handleAuth(message) {
+  const { type, mode, email, secret } = message ?? {};
+  if (type === "login" || type === "password") {
+    if (signingIn) throw new Error("Aguarde o acesso em andamento e tente novamente.");
+    if (type === "password") {
+      if (!["login", "signup", "confirm"].includes(mode) || typeof email !== "string" || typeof secret !== "string") {
+        throw new Error("Confira os dados e tente novamente.");
+      }
+      signingIn = passwordAuth(supabase.auth, mode, email, secret);
+    } else {
+      signingIn = login();
+    }
+    try {
+      const session = await signingIn;
+      if (type === "password" && mode === "signup" && !session) {
+        await chrome.storage.session.set({ pendingSignupEmail: email.trim() });
+      } else {
+        await chrome.storage.session.remove("pendingSignupEmail");
+      }
+      if (type === "password") return session?.access_token ?? null;
+    } finally {
+      signingIn = undefined;
+    }
   } else if (type === "logout") {
     const { error } = await supabase.auth.signOut({ scope: "local" });
     if (error) throw new Error("Não foi possível sair. Tente novamente.");

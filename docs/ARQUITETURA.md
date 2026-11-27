@@ -2,9 +2,18 @@
 
 ## Objetivo e escopo
 
-O AutenticAI é um projeto acadêmico de análise de informações. A API e a migração do banco estão em `system/backend/`. O projeto remoto do Supabase já tem o esquema inicial do histórico. Os clientes usam Supabase Auth com PKCE e enviam o token de acesso ao Worker. A extensão usa `activeTab` para ler o texto após solicitação. O Android usa `MediaProjection` para a captura iniciada pelo botão flutuante.
+O AutenticAI é um projeto acadêmico de análise de informações. A API e a migração do banco estão em `system/backend/`. O projeto remoto do Supabase já tem o esquema inicial do histórico. Os clientes usam Supabase Auth para Google com PKCE ou e-mail e senha. Eles enviam ao Worker apenas o token de acesso da sessão. A extensão usa `activeTab` para ler o texto após solicitação. O Android usa `MediaProjection` para a captura iniciada pelo botão flutuante.
 
-Em desenvolvimento, o Worker e os três clientes usam `system/backend/.env.local`. Os clientes recebem apenas os endereços e a chave publicável do Supabase. As chaves da Groq e da Tavily ficam no Worker. [Guia do backend](../system/backend/README.md)
+Em desenvolvimento, o Worker e os três clientes usam `system/backend/.env`. As variáveis de `system/backend/.env.local` têm prioridade quando esse arquivo existe. Os clientes recebem apenas os endereços e a chave publicável do Supabase. As chaves da Groq e da Tavily ficam no Worker. [Guia do backend](../system/backend/README.md)
+
+| Caminho | Responsabilidade |
+|---|---|
+| `system/backend/api/` | Rotas e autenticação em `worker.js`, leitura de entradas em `input.js` e integração com Groq e Tavily em `analysis.js`. |
+| `system/analysis-client.mjs` | Requisições autenticadas e tratamento de erros na web e na extensão. |
+| `system/password-auth.mjs` | Login, cadastro e verificação de código no Supabase para web e extensão. |
+| `system/web/app/components/` | Componentes de marca e do espaço de análise. |
+| `system/extension/assets/` | Ícone e fonte incluídos no build da extensão. |
+| `system/mobile/lib/` | Cliente HTTP com respostas tipadas em `analysis_api.dart`, tela de trabalho e visualização do relatório. |
 
 ```mermaid
 flowchart LR
@@ -14,7 +23,7 @@ flowchart LR
     API --> G[Groq: transcrição e análise]
     API --> T[Tavily: pesquisa de fontes]
     API --> DB[(PostgreSQL no Supabase)]
-    W --> AUTH[Supabase Auth: Google]
+    W --> AUTH[Supabase Auth: Google ou e-mail e senha]
     C --> AUTH
     A --> AUTH
     API --> AUTH
@@ -22,15 +31,21 @@ flowchart LR
 
 A web Next.js é exportada como arquivos estáticos e servida por um Worker. O Worker da API valida a sessão, chama Groq e Tavily e grava o relatório no Supabase. As duas chaves de API ficam no Worker. [Publicação da web](../system/web/README.md#publicação-no-cloudflare) · [Publicação da API](../system/backend/README.md#publicação-no-cloudflare)
 
+O Worker trata redirecionamentos dos provedores como falhas e mantém o token da sessão e as chaves restritos aos destinos configurados. [Redirecionamentos no Cloudflare Workers](https://developers.cloudflare.com/workers/runtime-apis/request/#properties)
+
+O cadastro por e-mail envia um código de confirmação pelo Supabase. A pessoa digita o código no cliente onde iniciou o cadastro. O Worker valida o token no Supabase e aceita sessões Google ou e-mail. As políticas do PostgreSQL continuam usando o ID do usuário para restringir o histórico ao proprietário. [Configuração do e-mail e do modelo de confirmação](../system/backend/README.md#login-por-e-mail)
+
 ## Fluxo de análise
 
-1. O usuário entra com sua conta Google e seleciona o conteúdo na web, na extensão ou no Android.
+1. O usuário entra com Google ou e-mail e senha e seleciona o conteúdo na web, na extensão ou no Android.
 2. O cliente mostra uma prévia e pede confirmação antes do envio. Web e Android aceitam texto digitado ou print escolhido. O Android também aceita um print capturado com autorização, e a extensão extrai texto da página ativa.
 3. O Worker valida a sessão e a entrada. Para um print, a Groq transcreve a imagem com `qwen/qwen3.8-27b`. A Tavily faz uma busca básica com os primeiros 400 caracteres e retorna até cinco fontes. A Groq analisa o texto e os trechos retornados com `openai/gpt-oss-120b`.
 4. O resultado apresenta até cinco afirmações com justificativas e referências aos links da Tavily. Quando faltam evidências, o relatório informa a limitação ou classifica a afirmação como inconclusiva. Se um provedor falhar, a API retorna uma mensagem de erro.
 5. O histórico salva o texto enviado ou extraído da imagem, o resultado e as fontes, vinculados ao usuário. O print original não é armazenado permanentemente. Cada usuário pode consultar e excluir seus próprios registros.
 
 O usuário revisa o conteúdo e confirma o envio. O banco restringe o histórico à conta que criou o relatório. As cotas da Groq e da Tavily limitam a quantidade de análises. Uma busca pelos primeiros 400 caracteres pode deixar afirmações posteriores sem evidências.
+
+Os clientes aguardam até 135 segundos no envio da análise para acomodar a sequência de chamadas de um print. A consulta e a exclusão de histórico têm prazo de 25 segundos.
 
 O modelo de dados do histórico está no [diagrama entidade-relacionamento](DER.md).
 

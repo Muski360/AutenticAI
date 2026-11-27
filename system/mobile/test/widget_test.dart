@@ -176,4 +176,14 @@ void main() {
     );
     expect(imageMime(png), 'image/png');
   });
+
+  test('Rejeita registros inválidos antes de renderizar o histórico', () async {
+    final api = AnalysisApi(
+      Uri.parse('https://example.test'),
+      () => 'test-token',
+      client: MockClient((_) async => http.Response('[{"id":"test"}]', 200)),
+    );
+    addTearDown(api.close);
+    await expectLater(api.history(0), throwsA(isA<ApiError>()));
+  });
 }

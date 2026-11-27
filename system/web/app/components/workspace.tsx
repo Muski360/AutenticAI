@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { historyPageSize, historyTitleText, maxText, requestAnalysis, sourceUrl } from "../../../analysis-client.mjs";
 import { Icon } from "./brand";
 
 type Summary = { id: string; criada_em: string; texto_analisado: string };
@@ -16,8 +17,6 @@ type Report = Pick<Summary, "id" | "texto_analisado"> & {
   limitacao: string | null;
 };
 type Input = { text: string } | { file: File; url: string };
-const pageSize = 20;
-const maxText = 20_000;
 const maxImage = 5 * 1024 * 1024;
 const imageTypes = ["image/png", "image/jpeg", "image/webp"];
 
@@ -51,20 +50,6 @@ export function Workspace({ api, token }: { api: string; token: string }) {
   useEffect(() => {
     if (report) resultTitle.current?.focus();
   }, [report]);
-
-  async function request<T>(path: string, options?: RequestInit): Promise<T> {
-    const res = await fetch(new URL(path, api), {
-      ...options,
-      headers: { ...options?.headers, authorization: `Bearer ${token}` },
-      signal: AbortSignal.timeout(75_000),
-    });
-    if (res.status === 401) throw new Error("Sua sessão expirou. Saia e entre novamente.");
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      throw new Error(typeof body.erro === "string" ? body.erro : "O serviço não respondeu como esperado.");
-    }
-    return res.status === 204 ? undefined as T : res.json();
-  }
 
   async function run(message: string, action: () => Promise<void>) {
     setBusy(message);
@@ -115,7 +100,7 @@ export function Workspace({ api, token }: { api: string; token: string }) {
         data.set("imagem", preview.file);
         options.body = data;
       }
-      setReport(await request<Report>("/analises", options));
+      setReport(await requestAnalysis<Report>(api, token, "/analises", options));
       setPreview(undefined);
       setText("");
       setFile(undefined);
@@ -124,9 +109,9 @@ export function Workspace({ api, token }: { api: string; token: string }) {
   }
 
   async function loadHistory(at: number) {
-    const rows = await request<Summary[]>(`/analises?offset=${at}`);
+    const rows = await requestAnalysis<Summary[]>(api, token, `/analises?offset=${at}`);
     if (!rows.length && at > 0) {
-      await loadHistory(at - pageSize);
+      await loadHistory(at - historyPageSize);
       return;
     }
     setHistory(rows);
@@ -135,7 +120,7 @@ export function Workspace({ api, token }: { api: string; token: string }) {
 
   function remove(id: string) {
     void run("Excluindo análise…", async () => {
-      await request<void>(`/analises/${encodeURIComponent(id)}`, { method: "DELETE" });
+      await requestAnalysis<void>(api, token, `/analises/${encodeURIComponent(id)}`, { method: "DELETE" });
       setDeleting("");
       setReport(current => current?.id === id ? undefined : current);
       setHistory(undefined);
@@ -216,18 +201,18 @@ export function Workspace({ api, token }: { api: string; token: string }) {
           </button>
         </div>
         {history && <div className="panel history-panel">
-        {history?.length === 0 && <p className="empty-state"><Icon name="clock" /> Você ainda não tem análises.</p>}
-        {history && history.length > 0 && (
+        {history.length === 0 && <p className="empty-state"><Icon name="clock" /> Você ainda não tem análises.</p>}
+        {history.length > 0 && (
           <ul className="records">
             {history.map(item => (
               <li key={item.id}>
                 <div className="record-copy">
-                <p>{item.texto_analisado.trim().slice(0, 120) || "Análise de print"}{item.texto_analisado.trim().length > 120 ? "…" : ""}</p>
+                <p>{historyTitleText(item.texto_analisado)}</p>
                 <small>{new Date(item.criada_em).toLocaleString("pt-BR")}</small>
                 </div>
                 <div className="actions">
                   <button type="button" disabled={!!busy} onClick={() => void run("Carregando análise…", async () => {
-                    setReport(await request<Report>(`/analises/${encodeURIComponent(item.id)}`));
+                    setReport(await requestAnalysis<Report>(api, token, `/analises/${encodeURIComponent(item.id)}`));
                   })}>Ver análise</button>
                   {deleting === item.id ? (
                     <>
@@ -240,11 +225,11 @@ export function Workspace({ api, token }: { api: string; token: string }) {
             ))}
           </ul>
         )}
-        {history && (offset > 0 || history.length === pageSize) && (
+        {(offset > 0 || history.length === historyPageSize) && (
           <nav className="panel-actions" aria-label="Páginas do histórico">
-            <button type="button" disabled={!!busy || offset === 0} onClick={() => void run("Carregando histórico…", () => loadHistory(offset - pageSize))}>Anterior</button>
-            <span>Página {offset / pageSize + 1}</span>
-            <button type="button" disabled={!!busy || history.length < pageSize} onClick={() => void run("Carregando histórico…", () => loadHistory(offset + pageSize))}>Próxima</button>
+            <button type="button" disabled={!!busy || offset === 0} onClick={() => void run("Carregando histórico…", () => loadHistory(offset - historyPageSize))}>Anterior</button>
+            <span>Página {offset / historyPageSize + 1}</span>
+            <button type="button" disabled={!!busy || history.length < historyPageSize} onClick={() => void run("Carregando histórico…", () => loadHistory(offset + historyPageSize))}>Próxima</button>
           </nav>
         )}
         </div>}
@@ -276,13 +261,12 @@ function ReportBody({ report }: { report: Report }) {
       {report.fontes.length === 0 && <p className="guide">Nenhuma fonte disponível para este relatório.</p>}
       {report.fontes.length > 0 && (
           <ol className="sources">
-            {report.fontes.map((source, index) => (
-              <li id={`source-${index + 1}`} key={index} tabIndex={-1}>
-                {/^https?:\/\//i.test(source.url)
-                  ? <a href={source.url} target="_blank" rel="noreferrer">{source.titulo} <Icon name="arrow" /></a>
-                  : source.titulo}
-              </li>
-            ))}
+            {report.fontes.map((source, index) => {
+              const url = sourceUrl(source.url);
+              return <li id={`source-${index + 1}`} key={index} tabIndex={-1}>
+                {url ? <a href={url} target="_blank" rel="noreferrer">{source.titulo} <Icon name="arrow" /></a> : source.titulo}
+              </li>;
+            })}
           </ol>
       )}
       </aside>

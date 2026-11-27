@@ -1,8 +1,10 @@
+import { historyPageSize, historyTitleText, maxText, requestAnalysis, sourceUrl } from "../analysis-client.mjs";
+
 const $ = id => document.getElementById(id);
-const maxText = 20_000;
 let pendingText = "";
 let busy = false;
 let reportId;
+let accessMode = "login";
 
 const labels = {
   sustentada: "Sustentada",
@@ -11,8 +13,9 @@ const labels = {
   inconclusiva: "Inconclusiva",
 };
 
-async function auth(type) {
-  const reply = await chrome.runtime.sendMessage({ type });
+async function auth(type, payload) {
+  const reply = await chrome.runtime.sendMessage({ type, ...payload });
+  if (!reply) throw new Error("Não foi possível confirmar a sessão.");
   if (reply.error) throw new Error(reply.error);
   return reply.data;
 }
@@ -21,6 +24,8 @@ function showSession(signedIn) {
   $("access").hidden = signedIn;
   $("workspace").hidden = !signedIn;
   $("logout").hidden = !signedIn;
+  setAccessMode("login");
+  if (signedIn) $("auth-email").value = "";
   if (!signedIn) {
     clearPreview();
     $("result").hidden = true;
@@ -30,11 +35,28 @@ function showSession(signedIn) {
   }
 }
 
+function setAccessMode(mode) {
+  accessMode = mode;
+  const confirming = mode === "confirm";
+  $("password-field").hidden = confirming;
+  $("auth-password").disabled = confirming;
+  $("auth-password").value = "";
+  $("auth-password").autocomplete = mode === "signup" ? "new-password" : "current-password";
+  $("code-field").hidden = !confirming;
+  $("auth-code").disabled = !confirming;
+  $("auth-code").value = "";
+  $("auth-email").readOnly = confirming;
+  $("access-google").hidden = confirming;
+  $("password-submit").textContent = mode === "signup" ? "Criar conta" : confirming ? "Confirmar e-mail" : "Entrar com e-mail";
+  $("access-switch").textContent = mode === "login" ? "Criar conta" : "Voltar para entrar";
+}
+
 async function run(status, action) {
   if (busy) return;
   busy = true;
   $("status").textContent = status;
   $("error").textContent = "";
+  $("access-fields").disabled = true;
   document.querySelectorAll("button").forEach(button => { button.disabled = true; });
   try {
     await action();
@@ -45,6 +67,7 @@ async function run(status, action) {
   } finally {
     busy = false;
     $("status").textContent = "";
+    $("access-fields").disabled = false;
     document.querySelectorAll("button").forEach(button => { button.disabled = false; });
   }
 }
@@ -53,19 +76,9 @@ async function request(path, options = {}) {
   const token = await auth("session");
   if (!token) {
     showSession(false);
-    throw new Error("Sua sessão expirou. Entre com Google novamente.");
+    throw new Error("Sua sessão expirou. Entre novamente.");
   }
-  const response = await fetch(new URL(path, API_URL), {
-    ...options,
-    headers: { ...options.headers, authorization: `Bearer ${token}` },
-    signal: AbortSignal.timeout(75_000),
-  });
-  if (response.status === 401) throw new Error("Sua sessão expirou. Saia e entre novamente.");
-  if (!response.ok) {
-    const body = await response.json().catch(() => ({}));
-    throw new Error(typeof body.erro === "string" ? body.erro : "A API não respondeu como esperado.");
-  }
-  return response.status === 204 ? undefined : response.json();
+  return requestAnalysis(API_URL, token, path, options);
 }
 
 function clearPreview() {
@@ -153,10 +166,10 @@ function showReport(report) {
       const item = element("li");
       item.id = `source-${index + 1}`;
       item.tabIndex = -1;
-      const url = URL.canParse(source.url) && new URL(source.url);
-      if (url && ["http:", "https:"].includes(url.protocol)) {
+      const url = sourceUrl(source.url);
+      if (url) {
         const link = element("a", source.titulo);
-        link.href = url.href;
+        link.href = url;
         link.target = "_blank";
         link.rel = "noreferrer";
         item.append(link);
@@ -189,8 +202,7 @@ async function loadHistory(offset = 0) {
   for (const item of rows) {
     const id = encodeURIComponent(item.id);
     const row = element("li");
-    const text = item.texto_analisado.trim();
-    row.append(element("p", text ? text.slice(0, 120) + (text.length > 120 ? "…" : "") : "Análise de print"),
+    row.append(element("p", historyTitleText(item.texto_analisado)),
       element("small", new Date(item.criada_em).toLocaleString("pt-BR")),
       button("Ver análise", () => run("Carregando análise…", async () => showReport(await request(`/analises/${id}`)))));
     const remove = button("Excluir", () => {
@@ -223,11 +235,35 @@ async function loadHistory(offset = 0) {
     list.append(row);
   }
   if (rows.length) records.append(list);
-  if (offset) records.append(button("Anterior", () => run("Carregando histórico…", () => loadHistory(offset - 20))));
-  if (rows.length === 20) records.append(button("Próxima", () => run("Carregando histórico…", () => loadHistory(offset + 20))));
+  if (offset) records.append(button("Anterior", () => run("Carregando histórico…", () => loadHistory(offset - historyPageSize))));
+  if (rows.length === historyPageSize) records.append(button("Próxima", () => run("Carregando histórico…", () => loadHistory(offset + historyPageSize))));
 }
 
 $("login").onclick = () => run("Abrindo login Google…", async () => showSession(Boolean(await auth("login"))));
+$("access-switch").onclick = () => {
+  $("error").textContent = "";
+  if (accessMode === "confirm") {
+    void run("Voltando ao acesso…", async () => {
+      await chrome.storage.session.remove("pendingSignupEmail");
+      setAccessMode("login");
+    });
+  } else {
+    setAccessMode(accessMode === "login" ? "signup" : "login");
+  }
+};
+$("access-form").onsubmit = async event => {
+  event.preventDefault();
+  const mode = accessMode;
+  const email = $("auth-email").value;
+  const secret = $(mode === "confirm" ? "auth-code" : "auth-password").value;
+  const progress = mode === "signup" ? "Criando conta…" : mode === "confirm" ? "Confirmando e-mail…" : "Entrando…";
+  await run(progress, async () => {
+    const token = await auth("password", { mode, email, secret });
+    if (mode === "signup" && !token) setAccessMode("confirm");
+    else showSession(Boolean(token));
+  });
+  if (mode === "signup" && accessMode === "confirm") $("auth-code").focus();
+};
 $("logout").onclick = () => run("Encerrando sessão…", async () => { await auth("logout"); showSession(false); });
 $("read").onclick = () => run("Lendo a aba…", readTab);
 $("cancel").onclick = () => { clearPreview(); $("read").focus(); };
@@ -246,6 +282,18 @@ $("submit").onclick = () => {
 };
 $("history").onclick = () => run("Carregando histórico…", () => loadHistory());
 void run("Verificando sessão…", async () => {
-  try { showSession(Boolean(await auth("session"))); }
-  catch (error) { showSession(false); throw error; }
+  try {
+    const signedIn = Boolean(await auth("session"));
+    showSession(signedIn);
+    if (!signedIn) {
+      const { pendingSignupEmail } = await chrome.storage.session.get("pendingSignupEmail");
+      if (pendingSignupEmail) {
+        $("auth-email").value = pendingSignupEmail;
+        setAccessMode("confirm");
+      }
+    }
+  } catch (error) {
+    showSession(false);
+    throw error;
+  }
 });

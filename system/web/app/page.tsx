@@ -3,8 +3,9 @@
 import { createClient, type Session, type SupabaseClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Brand, Icon, Investigation } from "./brand";
-import { Workspace } from "./workspace";
+import { AccessForm } from "./components/access-form";
+import { Brand, Icon, Investigation } from "./components/brand";
+import { Workspace } from "./components/workspace";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -26,34 +27,25 @@ export default function Home() {
     const { data: { subscription } } = client.auth.onAuthStateChange((event, current) => {
       setSession(current);
       if (event === "INITIAL_SESSION" && (failed || (returned && !current))) {
-        setError("Não foi possível entrar com Google. Tente novamente.");
+        setError("Não foi possível concluir o acesso. Tente entrar novamente.");
         window.history.replaceState(null, "", window.location.pathname);
       }
     });
     return () => subscription.unsubscribe();
   }, []);
 
-  async function authenticate() {
+  async function signOut() {
     if (!client) return;
     setBusy(true);
     setError("");
     try {
-      if (session) {
-        const { error } = await client.auth.signOut({ scope: "local" });
-        if (error) throw error;
-      } else {
-        const { data, error } = await client.auth.signInWithOAuth({
-            provider: "google",
-            options: { redirectTo: new URL("/", window.location.origin).href, skipBrowserRedirect: true },
-          });
-        if (error || !data.url) throw error ?? new Error();
-        window.location.assign(data.url);
-        return;
-      }
+      const { error } = await client.auth.signOut({ scope: "local" });
+      if (error) throw error;
     } catch {
-      setError(session ? "Não foi possível sair. Tente novamente." : "Não foi possível abrir o login Google. Tente novamente.");
+      setError("Não foi possível sair. Tente novamente.");
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   }
 
   if (session && api) {
@@ -70,7 +62,7 @@ export default function Home() {
         <div className="app-column">
           <header className="app-header">
             <a className="mobile-brand" href="#main-content"><Brand /></a>
-            <button type="button" className="button small" disabled={busy} onClick={authenticate}>Sair</button>
+            <button type="button" className="button small" disabled={busy} onClick={signOut}>Sair</button>
           </header>
           <main id="main-content" className="app-main" tabIndex={-1}>
             {error && <p className="feedback error" role="alert">{error}</p>}
@@ -101,12 +93,11 @@ export default function Home() {
           <div className="frame hero-grid">
             <div className="hero-copy">
               <h1 id="hero-heading">Análise de<br /><span>informações</span></h1>
-              <div className="actions hero-actions">
-                <button className="button dark" type="button" disabled={!ready || busy} onClick={authenticate}>Entrar com Google <Icon name="arrow" /></button>
-              </div>
-              {error ? <p className="feedback error" role="alert">{error}</p> : !configured || !ready ? (
+              {ready && client ? (
+                <AccessForm auth={client.auth} callbackError={error} clearCallbackError={() => setError("")} />
+              ) : (
                 <p className="hero-note" role="status">{configured ? "Verificando sua sessão…" : "O acesso ainda não está disponível neste ambiente."}</p>
-              ) : null}
+              )}
             </div>
             <Investigation />
           </div>

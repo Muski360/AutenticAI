@@ -6,6 +6,8 @@ A composição editorial do [protótipo](../prototype/) é a referência para a 
 
 Os títulos nomeiam a tarefa ou a seção. Avisos de envio e permissões ficam junto às ações correspondentes. Classificações, fontes e limitações acompanham o resultado.
 
+No acesso, o formulário usa campos rotulados e o botão azul profundo. O botão Google fica junto ao formulário, com contorno e um divisor. Na confirmação de cadastro, o campo do código ocupa o lugar da senha.
+
 ## Elementos principais
 
 | Elemento | Diretriz |

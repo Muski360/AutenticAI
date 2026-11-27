@@ -8,7 +8,7 @@ Este documento orienta as telas do projeto acadêmico. Os fluxos são planejados
 
 ```mermaid
 flowchart TD
-    A[Entrar com Google] --> B{Escolher conteúdo}
+    A[Entrar com Google ou e-mail e senha] --> B{Escolher conteúdo}
     B -->|Web| C[Digitar texto ou enviar print]
     B -->|Chrome| D[Ler texto da página ativa]
     B -->|Android| E[Digitar texto, escolher print ou autorizar captura pelo botão flutuante]
@@ -27,7 +27,7 @@ A prévia informa que o conteúdo será enviado ao serviço de IA. A análise é
 
 | Tela | Conteúdo e ações |
 |---|---|
-| **Acesso** | Entrar com Google e encerrar sessão. |
+| **Acesso** | Entrar com Google ou e-mail e senha, criar conta, confirmar o e-mail com um código e encerrar a sessão. |
 | **Nova análise** | Na web e no Android, digitar texto ou escolher print. No Android, também iniciar captura pelo botão flutuante. Na extensão, ler a aba ativa. |
 | **Prévia** | Mostrar o texto ou a imagem que será enviada, informar o uso de IA e permitir confirmar ou cancelar. |
 | **Resultado** | Mostrar afirmações, classificação, justificativas e fontes disponíveis. Apresentar indícios de IA separadamente, sem percentual ou garantia de autoria. |

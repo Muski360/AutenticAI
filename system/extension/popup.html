@@ -18,7 +18,29 @@
       <section id="access" class="access" hidden>
         <div class="evidence-plate" aria-hidden="true"><div class="orbit"><img src="symbol.png" alt=""></div></div>
         <h1>Análise da <span>aba</span></h1>
-        <button id="login" class="primary">Entrar com Google <span aria-hidden="true">↗</span></button>
+        <form id="access-form" method="post">
+          <fieldset id="access-fields">
+            <legend class="sr-only">Acesso por e-mail</legend>
+            <label for="auth-email">E-mail</label>
+            <input id="auth-email" name="email" type="email" autocomplete="username" required>
+            <div id="password-field" class="auth-field">
+              <label for="auth-password">Senha</label>
+              <input id="auth-password" name="password" type="password" autocomplete="current-password" required>
+            </div>
+            <div id="code-field" class="auth-field" hidden>
+              <label for="auth-code">Código de confirmação</label>
+              <input id="auth-code" name="code" type="text" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]+" aria-describedby="auth-code-note" required disabled>
+              <p id="auth-code-note">Use o código do e-mail ou confirme pelo link e volte para entrar.</p>
+            </div>
+            <div class="actions access-actions">
+              <button id="password-submit" class="primary" type="submit">Entrar com e-mail</button>
+              <button id="access-switch" type="button">Criar conta</button>
+            </div>
+          </fieldset>
+        </form>
+        <div id="access-google">
+          <button id="login" type="button">Entrar com Google <span aria-hidden="true">↗</span></button>
+        </div>
       </section>
       <div id="workspace" hidden>
         <section class="panel intake">

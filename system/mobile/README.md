@@ -11,9 +11,9 @@ flutter pub get
 node flutter.mjs run
 ```
 
-Execute os comandos em `system/mobile/`. Use `node flutter.mjs apk` para gerar o APK. Com a API em HTTP, o APK é de depuração. Para distribuição, configure a URL HTTPS do Worker e gere o APK novamente.
+Execute os comandos em `system/mobile/`. Use `node flutter.mjs apk` para gerar um APK de teste. Com a API em HTTP, o script usa o modo de depuração. Para distribuir, configure a URL HTTPS do Worker e uma chave de assinatura de produção. A configuração atual do Gradle usa a chave de depuração também no build release. [Assinatura de apps Android](https://developer.android.com/studio/publish/app-signing)
 
-1. Entre com Google. Use **Abrir histórico** para validar a sessão no Supabase.
+1. Entre com Google ou e-mail e senha. Ao cadastrar uma conta, informe o código recebido no próprio app. Use **Abrir histórico** para validar a sessão no Supabase. [Configuração de e-mail](../backend/README.md#login-por-e-mail) · [Testes de login](../../docs/relatorios_testes/login.md)
 2. Digite um texto e clique em **Revisar texto**, ou use **Escolher print**. A prévia permite confirmar ou cancelar.
 3. Para capturar outro app, use **Autorizar sobreposição** e permita que o AutenticAI apareça sobre outros apps. Volte e toque em **Ativar botão flutuante**.
 4. Abra a tela desejada, toque em **Capturar** e autorize a captura no diálogo do Android. A prévia aparece no AutenticAI. Use **Cancelar prévia** para testar a captura sem gastar cota.

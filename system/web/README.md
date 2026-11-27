@@ -1,6 +1,6 @@
 # AutenticAI na web
 
-Cliente em Next.js para login Google, análise de texto ou print e histórico.
+Cliente em Next.js para login com Google ou e-mail e senha, análise de texto ou print e histórico.
 
 Em `system/web/`, execute:
 
@@ -9,11 +9,13 @@ npm ci
 npm run dev
 ```
 
-O Next.js lê a configuração pública de `system/backend/.env.local`. Use a mesma origem da web em `ALLOWED_ORIGINS` no backend. Reinicie o Next.js após alterar as variáveis. [Configuração compartilhada](../backend/README.md#configuração)
+O Next.js lê os valores públicos da configuração compartilhada em `system/backend/`. As variáveis `NEXT_PUBLIC_*` documentadas abaixo podem sobrescrever esses valores na web. Use a mesma origem da web em `ALLOWED_ORIGINS` no backend e reinicie o Next.js após alterar as variáveis. [Configuração compartilhada](../backend/README.md#configuração)
 
 No Supabase Auth, habilite o provedor Google e autorize `http://localhost:3000/` como URL de retorno para o ambiente local. Configure o callback do Supabase no cliente OAuth do Google. A aplicação usa a página inicial para concluir o login no mesmo navegador. [Guia do Supabase](https://supabase.com/docs/guides/auth/social-sign-in/auth-google)
 
-Inicie a [API local](../backend/README.md) e abra [localhost:3000](http://localhost:3000). Entre com Google, envie um texto curto e abra o relatório pelo histórico para testar Groq, Tavily e Supabase. Use `npm run lint` e `npm run build` para validar o projeto.
+Inicie a [API local](../backend/README.md) e abra [localhost:3000](http://localhost:3000). Entre com um dos métodos disponíveis. Para criar uma conta por e-mail, use **Criar conta** e digite o código recebido na própria página. [Configuração de e-mail](../backend/README.md#login-por-e-mail) · [Testes de login](../../docs/relatorios_testes/login.md)
+
+Envie um texto curto e abra o relatório pelo histórico para testar Groq, Tavily e Supabase. Use `npm run lint` e `npm run build` para validar o projeto.
 
 ## Publicação no Cloudflare
 

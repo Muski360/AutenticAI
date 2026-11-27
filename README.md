@@ -21,7 +21,7 @@ Antes de enviar, o usuário poderá revisar o conteúdo. A análise mostrará af
 - **Aplicação e API:** Next.js e Cloudflare Workers.
 - **Mobile:** Flutter, com integração nativa Android para a captura de tela.
 - **Extensão:** Chrome, com Manifest V3.
-- **Conta e dados:** login Google pelo Supabase Auth e PostgreSQL no Supabase.
+- **Conta e dados:** Google ou e-mail e senha pelo Supabase Auth, com histórico no PostgreSQL.
 - **Análise e pesquisa:** Groq (`openai/gpt-oss-120b`) e Tavily Search.
 
 ## Níveis de análise
@@ -30,11 +30,12 @@ O projeto oferece o nível **Light (Leve)**, com uma busca básica por análise.
 
 ## Documentação
 
-Acompanhe as etapas, os testes e a próxima tarefa no [plano de ação](plano-acao.md).
+A [arquitetura](docs/ARQUITETURA.md) descreve a organização do código. Os [relatórios de testes](docs/relatorios_testes/) registram as validações do projeto.
+
+Veja a [configuração do login por e-mail](system/backend/README.md#login-por-e-mail) e os [testes de login](docs/relatorios_testes/login.md).
 
 - [Problema e referências](docs/IDENTIFICACAO_DO_PROBLEMA.md)
 - [Planejamento e requisitos](docs/PLANEJAMENTO_E_REQUISITOS.md)
-- [Arquitetura](docs/ARQUITETURA.md)
 - [Diagrama entidade-relacionamento](docs/DER.md)
 - [Fluxos e prototipagem](docs/REQUISITOS_E_PROTOTIPAGEM.md)
 - [Identidade visual](docs/IDENTIDADE_VISUAL.md)

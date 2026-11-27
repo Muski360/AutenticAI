@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart';
 
 import 'analysis_api.dart';
 import 'identity.dart';
+import 'report_view.dart';
 
 const android = MethodChannel('autenticai/android');
 
@@ -37,8 +37,8 @@ class _WorkspaceState extends State<Workspace> {
   bool _allowed = false;
   bool _overlay = false;
   AnalysisInput? _preview;
-  Json? _report;
-  List<Json>? _history;
+  AnalysisReport? _report;
+  List<AnalysisSummary>? _history;
   int _offset = 0;
   String? _busy;
   String? _error;
@@ -198,8 +198,8 @@ class _WorkspaceState extends State<Workspace> {
       await _api.delete(id);
       if (!mounted) return;
       setState(() {
-        _history?.removeWhere((row) => row['id'] == id);
-        if (_report?['id'] == id) _report = null;
+        _history?.removeWhere((row) => row.id == id);
+        if (_report?.id == id) _report = null;
         _notice = 'Análise excluída.';
       });
     });
@@ -391,15 +391,13 @@ class _WorkspaceState extends State<Workspace> {
                         ),
                       for (final item in history) ...[
                         const Divider(height: 20),
-                        Text(_historyTitle(item), style: type.titleMedium),
+                        Text(_historyTitle(item.text), style: type.titleMedium),
                         Wrap(
                           children: [
                             TextButton(
                               onPressed: enabled
                                   ? () => _run('Carregando análise…', () async {
-                                      final detail = await _api.detail(
-                                        item['id'] as String,
-                                      );
+                                      final detail = await _api.detail(item.id);
                                       if (mounted) {
                                         setState(() => _report = detail);
                                       }
@@ -412,7 +410,7 @@ class _WorkspaceState extends State<Workspace> {
                                 foregroundColor: danger,
                               ),
                               onPressed: enabled
-                                  ? () => _delete(item['id'] as String)
+                                  ? () => _delete(item.id)
                                   : null,
                               child: const Text('Excluir'),
                             ),
@@ -424,14 +422,16 @@ class _WorkspaceState extends State<Workspace> {
                           if (_offset > 0)
                             TextButton(
                               onPressed: enabled
-                                  ? () => _loadHistory(_offset - 20)
+                                  ? () =>
+                                        _loadHistory(_offset - historyPageSize)
                                   : null,
                               child: const Text('Anterior'),
                             ),
-                          if (history.length == 20)
+                          if (history.length == historyPageSize)
                             TextButton(
                               onPressed: enabled
-                                  ? () => _loadHistory(_offset + 20)
+                                  ? () =>
+                                        _loadHistory(_offset + historyPageSize)
                                   : null,
                               child: const Text('Próxima'),
                             ),
@@ -448,125 +448,11 @@ class _WorkspaceState extends State<Workspace> {
     );
   }
 
-  String _historyTitle(Json item) {
-    final text = (item['texto_analisado'] as String).trim();
+  String _historyTitle(String value) {
+    final text = value.trim();
     if (text.isEmpty) return 'Análise de print';
     return text.characters.length > 120
         ? '${text.characters.take(120)}…'
         : text;
-  }
-}
-
-class ReportView extends StatelessWidget {
-  const ReportView({super.key, required this.report});
-  final Json report;
-  static const _labels = {
-    'sustentada': 'Sustentada',
-    'contradita': 'Contradita',
-    'mista': 'Evidências mistas',
-    'inconclusiva': 'Inconclusiva',
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final claims = (report['afirmacoes'] as List).cast<Json>();
-    final sources = (report['fontes'] as List).cast<Json>();
-    final type = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Resultado',
-          style: type.headlineMedium?.copyWith(letterSpacing: -1.15),
-        ),
-        const SizedBox(height: 12),
-        Panel(
-          highlight: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (report['texto_analisado'] case final String text
-                  when text.isNotEmpty)
-                ExpansionTile(
-                  title: const Text('Texto analisado'),
-                  children: [SelectableText(text)],
-                ),
-              if (report['limitacao'] case final String note)
-                FeedbackLine(note),
-              if (claims.isEmpty)
-                const Text('Nenhuma afirmação verificável foi identificada.'),
-              for (final claim in claims) ...[
-                const Divider(height: 24),
-                Text(claim['texto'] as String, style: type.titleMedium),
-                const SizedBox(height: 8),
-                Verdict(
-                  text: _labels[claim['classificacao']] ?? 'Inconclusiva',
-                  code: claim['classificacao'],
-                ),
-                const SizedBox(height: 8),
-                Text(claim['justificativa'] as String),
-                if (claim['fontes'] case final List refs when refs.isNotEmpty)
-                  Text(
-                    'Fontes: ${refs.join(', ')}',
-                    style: const TextStyle(color: muted),
-                  ),
-              ],
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        Panel(
-          color: surface,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Fontes', style: type.titleLarge),
-              if (sources.isEmpty)
-                const Text(
-                  'Nenhuma fonte disponível para este relatório.',
-                  style: TextStyle(color: muted),
-                ),
-              for (final (index, source) in sources.indexed) ...[
-                const Divider(height: 16),
-                if (Uri.tryParse(source['url'] as String) case final Uri link
-                    when link.isScheme('https') || link.isScheme('http'))
-                  TextButton.icon(
-                    onPressed: () =>
-                        launchUrl(link, mode: LaunchMode.externalApplication),
-                    icon: const Icon(Icons.arrow_outward, size: 16),
-                    iconAlignment: IconAlignment.end,
-                    label: Text('${index + 1}. ${source['titulo']}'),
-                  )
-                else
-                  Text('${index + 1}. ${source['titulo']}'),
-              ],
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        Panel(
-          color: tint,
-          highlight: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Indícios de conteúdo gerado por IA',
-                style: type.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                report['indicios_ia'] as String? ??
-                    'O relatório não apontou indícios.',
-              ),
-              const Text(
-                'Indícios não confirmam autoria.',
-                style: TextStyle(color: muted),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
   }
 }

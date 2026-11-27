@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'entry_screen.dart';
 import 'identity.dart';
 import 'workspace.dart';
 
 const _url = String.fromEnvironment('SUPABASE_URL');
 const _key = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
 const _api = String.fromEnvironment('API_URL');
-const _returnUrl = 'br.edu.senai.autenticai://login-callback';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,30 +89,16 @@ class _AccountState extends State<Account> {
     } catch (_) {}
   }
 
-  Future<void> _changeAccount() async {
+  Future<void> _signOut() async {
     setState(() {
       _busy = true;
       _error = null;
     });
-    final signedIn = _session != null;
     try {
-      if (signedIn) {
-        await widget.auth.signOut(scope: SignOutScope.local);
-      } else {
-        final opened = await widget.auth.signInWithOAuth(
-          OAuthProvider.google,
-          redirectTo: _returnUrl,
-          authScreenLaunchMode: LaunchMode.externalApplication,
-        );
-        if (!opened) throw StateError('Falha ao abrir o navegador.');
-      }
+      await widget.auth.signOut(scope: SignOutScope.local);
     } catch (_) {
       if (mounted) {
-        setState(
-          () => _error = signedIn
-              ? 'Não foi possível sair. Tente novamente.'
-              : 'Não foi possível abrir o login Google. Tente novamente.',
-        );
+        setState(() => _error = 'Não foi possível sair. Tente novamente.');
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -134,7 +120,7 @@ class _AccountState extends State<Account> {
         actions: [
           if (session != null)
             TextButton(
-              onPressed: _busy ? null : _changeAccount,
+              onPressed: _busy ? null : _signOut,
               child: const Text('Sair'),
             ),
         ],
@@ -147,12 +133,7 @@ class _AccountState extends State<Account> {
               child: FeedbackLine(error, error: true),
             ),
           if (session == null)
-            Expanded(
-              child: EntryScreen(
-                configured: true,
-                onLogin: _busy ? null : _changeAccount,
-              ),
-            )
+            Expanded(child: EntryScreen(auth: widget.auth))
           else
             Expanded(
               child: Workspace(
@@ -165,44 +146,4 @@ class _AccountState extends State<Account> {
       ),
     );
   }
-}
-
-class EntryScreen extends StatelessWidget {
-  const EntryScreen({super.key, this.configured = false, this.onLogin});
-  final bool configured;
-  final VoidCallback? onLogin;
-
-  @override
-  Widget build(BuildContext context) => SafeArea(
-    child: ListView(
-      padding: const EdgeInsets.fromLTRB(20, 26, 20, 24),
-      children: [
-        Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
-            child: Panel(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const EvidenceOrbit(),
-                  const Divider(height: 24),
-                  const DisplayTitle('Análise de', 'informações'),
-                  const SizedBox(height: 18),
-                  if (configured)
-                    FilledButton.icon(
-                      onPressed: onLogin,
-                      icon: const Icon(Icons.arrow_outward, size: 17),
-                      iconAlignment: IconAlignment.end,
-                      label: const Text('Entrar com Google'),
-                    )
-                  else
-                    const FeedbackLine('O acesso ainda não está configurado.'),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
 }

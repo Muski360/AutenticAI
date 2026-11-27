@@ -4,8 +4,8 @@ const api = 'http://127.0.0.1:8787';
 const { ALLOWED_ORIGINS, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } = process.env;
 const origins = (ALLOWED_ORIGINS ?? '').split(',').map(value => value.trim()).filter(Boolean);
 
-assert.ok(origins.length, 'Defina ALLOWED_ORIGINS em .env.local.');
-assert.ok(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY, 'Configure o Supabase em .env.local.');
+assert.ok(origins.length, 'Defina ALLOWED_ORIGINS em .env ou .env.local.');
+assert.ok(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY, 'Configure o Supabase em .env ou .env.local.');
 
 function request(url, options) {
   return fetch(url, { signal: AbortSignal.timeout(15_000), ...options });
@@ -40,3 +40,4 @@ const { external } = await settings.json();
 
 console.log('Worker e Supabase passaram na verificação básica.');
 console.log(`Login Google no Supabase: ${external?.google ? 'habilitado' : 'desabilitado'}.`);
+console.log(`Login por e-mail no Supabase: ${external?.email ? 'habilitado' : 'desabilitado'}.`);

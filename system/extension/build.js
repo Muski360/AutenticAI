@@ -3,11 +3,13 @@ import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { clientConfig } from "../client-config.mjs";
 
 const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, API_URL } = clientConfig();
-const supabase = new URL(SUPABASE_URL || "");
-const api = new URL(API_URL || "");
-if (supabase.protocol !== "https:" || !SUPABASE_PUBLISHABLE_KEY?.startsWith("sb_publishable_")) {
+if (!URL.canParse(SUPABASE_URL) || !SUPABASE_PUBLISHABLE_KEY) {
   throw new Error("Configure a URL HTTPS e a chave publicável do Supabase.");
 }
+const supabase = new URL(SUPABASE_URL);
+if (supabase.protocol !== "https:") throw new Error("Use HTTPS no endereço do Supabase.");
+if (!URL.canParse(API_URL)) throw new Error("Configure um endereço válido para a API.");
+const api = new URL(API_URL);
 if (api.protocol !== "https:" && !(api.protocol === "http:" && ["localhost", "127.0.0.1"].includes(api.hostname))) {
   throw new Error("Use HTTPS no endereço da API, exceto no ambiente local.");
 }
@@ -19,6 +21,7 @@ await mkdir("dist", { recursive: true });
 await build({
   entryPoints: ["auth.js", "popup.js"],
   bundle: true,
+  minify: true,
   outdir: "dist",
   target: "chrome120",
   define: Object.fromEntries(Object.entries({
@@ -27,13 +30,14 @@ await build({
     API_URL: api.origin,
   }).map(([name, value]) => [name, JSON.stringify(value)])),
 });
-await Promise.all([
-  copyFile("popup.html", "dist/popup.html"),
-  copyFile("popup.css", "dist/popup.css"),
-  copyFile("../../assets/autenticai-lockup-horizontal-black.png", "dist/brand.png"),
-  copyFile("../../assets/autenticai-symbol-white-cyan.png", "dist/symbol.png"),
-  copyFile("../../assets/design/Inter-Latin.woff2", "dist/Inter.woff2"),
-  copyFile("../../assets/design/icon-128.png", "dist/icon-128.png"),
-  copyFile("../../assets/design/OFL-Inter.txt", "dist/OFL-Inter.txt"),
-]);
+const staticFiles = {
+  "popup.html": "popup.html",
+  "popup.css": "popup.css",
+  "brand.png": "../../assets/autenticai-lockup-horizontal-black.png",
+  "symbol.png": "../../assets/autenticai-symbol-white-cyan.png",
+  "Inter.woff2": "assets/Inter-Latin.woff2",
+  "icon-128.png": "assets/icon-128.png",
+  "OFL-Inter.txt": "assets/OFL-Inter.txt",
+};
+await Promise.all(Object.entries(staticFiles).map(([name, source]) => copyFile(source, `dist/${name}`)));
 await writeFile("dist/manifest.json", JSON.stringify(manifest, null, 2) + "\n");

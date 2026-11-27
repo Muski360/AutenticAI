@@ -10,9 +10,11 @@
 *.rar
 output/
 .playwright-cli/
+.playwright-mcp/
 node_modules/
 .wrangler/
-/system/backend/supabase/.temp/
+**/supabase/.temp/
+/system/mobile/android/build/
 .env*
 !.env.example
 .dev.vars*

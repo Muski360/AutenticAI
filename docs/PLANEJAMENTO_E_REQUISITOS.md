@@ -8,7 +8,7 @@ Verificar informações encontradas na internet pode exigir tempo e consultas a 
 
 | ID | O sistema deverá permitir |
 |---|---|
-| RF01 | Entrar e sair usando uma conta Google pelo Supabase Auth. |
+| RF01 | Entrar com Google ou e-mail e senha, cadastrar uma conta com confirmação por e-mail e encerrar a sessão pelo Supabase Auth. |
 | RF02 | Enviar texto digitado ou print escolhido para análise na web e no Android. |
 | RF03 | Solicitar a análise do texto da página ativa pela extensão Chrome. |
 | RF04 | Usar um botão flutuante no Android para iniciar a captura, após as permissões necessárias. |
@@ -37,7 +37,7 @@ Quando possível, classificar afirmações como **sustentadas, contraditas, com 
 | Web e API | Next.js e Cloudflare Workers |
 | Extensão | Chrome Manifest V3 |
 | Android | Flutter e integração nativa para sobreposição e captura |
-| Dados e login | PostgreSQL e autenticação Google no Supabase |
+| Dados e login | PostgreSQL e autenticação Google ou e-mail e senha no Supabase |
 | Análise e pesquisa | Groq (`openai/gpt-oss-120b`) e Tavily Search |
 
 A ordem de desenvolvimento será: **estrutura e login → análise web e histórico → extensão Chrome → Android → testes da entrega**. Apenas o nível **Light** será implementado. Médio, Alto e Ultra são possibilidades futuras, sem recursos ou modelos definidos.

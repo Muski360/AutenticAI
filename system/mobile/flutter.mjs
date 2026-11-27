@@ -11,7 +11,7 @@ if (mode !== 'run' && mode !== 'apk') {
 
 const config = androidConfig();
 if (!config.SUPABASE_URL || !config.SUPABASE_PUBLISHABLE_KEY) {
-  throw new Error('Configure SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY em system/backend/.env.local.');
+  throw new Error('Configure SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY no .env ou .env.local do backend.');
 }
 const args = mode === 'run' ? ['run'] : ['build', 'apk'];
 if (mode === 'apk' && config.API_URL.startsWith('http:')) args.push('--debug');

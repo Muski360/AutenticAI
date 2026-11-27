@@ -67,8 +67,14 @@ summary { cursor: pointer; }
 .hero h1 { font-size: clamp(43px, 6.9vw, 100px); line-height: 1.02; letter-spacing: -.068em; font-weight: 500; }
 .hero h1 span { color: var(--blue); position: relative; display: inline-block; }
 .hero h1 span::after { content: ""; position: absolute; height: .075em; inset: auto .04em 0; transform: rotate(-2deg); background: var(--cyan); opacity: .35; }
-.hero-actions { margin-top: 1.5rem; }
-.hero-actions .button { min-height: 56px; }
+.access-form { max-width: 400px; margin-top: clamp(1.3rem, 3vw, 2rem); }
+.access-form fieldset { display: grid; gap: .8rem; }
+.access-form .field { gap: .25rem; }
+.access-form input { width: 100%; min-height: 46px; border: 1px solid #8094a4; border-radius: 5px; padding: .55rem .7rem; color: var(--ink); }
+.access-actions { column-gap: .65rem; row-gap: .3rem; }
+.access-switch { border-color: transparent; color: var(--blue); background: transparent; }
+.access-google { margin-top: .8rem; padding-top: .8rem; border-top: 1px solid var(--border); }
+.access-google button { width: 100%; justify-content: space-between; }
 .hero-note { color: var(--muted); font-size: .875rem; margin-top: .85rem; }
 .guide .icon { width: 15px; height: 15px; }
 .hero-copy .feedback { margin-top: 1rem; }

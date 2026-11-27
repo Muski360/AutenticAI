@@ -18,15 +18,7 @@ const postText = text => new Request('https://worker.example/analises', {
   headers: { ...token, 'content-type': 'application/json' },
   body: JSON.stringify({ texto: text }),
 });
-const grounded = {
-  texto_analisado: 'Uma afirmação extraída.',
-  indicios_ia: null,
-  limitacao: null,
-  afirmacoes: [
-    { texto: 'Primeira afirmação.', classificacao: 'sustentada', justificativa: 'A fonte confirma a afirmação.' },
-    { texto: 'Outra afirmação.', classificacao: 'contradita', justificativa: 'Resposta sem citação.' },
-  ],
-};
+const transcribedText = 'Uma afirmação extraída.';
 
 test('preserva a quebra de linha original e rejeita afirmações parafraseadas', async t => {
   t.mock.method(globalThis, 'fetch', async url => {
@@ -58,10 +50,32 @@ test('exige uma sessão e valida a origem antes de consultar serviços', async t
   const expired = await worker.fetch(postText('Conteúdo'), env);
   assert.equal(expired.status, 401);
   assert.equal(fetchMock.mock.callCount(), 1);
-  fetchMock.mock.mockImplementation(async () => Response.json({ id, app_metadata: { provider: 'email' } }));
+  fetchMock.mock.mockImplementation(async () => Response.json({
+    id, app_metadata: { provider: 'github', providers: 'not-google-or-email' },
+  }));
   const otherProvider = await worker.fetch(postText('Conteúdo'), env);
   assert.equal(otherProvider.status, 403);
   assert.equal(fetchMock.mock.callCount(), 2);
+});
+
+test('permite histórico com sessão de e-mail e rejeita sessão anônima', async t => {
+  let anonymous = false;
+  const fetchMock = t.mock.method(globalThis, 'fetch', async (url, options) => {
+    assert.equal(options.headers.authorization, token.authorization);
+    if (new URL(url).pathname === '/auth/v1/user') {
+      return Response.json({ id, app_metadata: { provider: 'email' }, is_anonymous: anonymous });
+    }
+    return Response.json([{ id }]);
+  });
+  const request = new Request('https://worker.example/analises', { headers: token });
+  const history = await worker.fetch(request, env);
+  assert.equal(history.status, 200);
+  assert.deepEqual(await history.json(), [{ id }]);
+
+  anonymous = true;
+  const denied = await worker.fetch(request, env);
+  assert.equal(denied.status, 403);
+  assert.equal(fetchMock.mock.callCount(), 3);
 });
 
 test('analisa texto e imagem, vincula fontes verificáveis e salva o relatório', async t => {
@@ -72,6 +86,7 @@ test('analisa texto e imagem, vincula fontes verificáveis e salva o relatório'
   let saved = 0;
   t.mock.method(globalThis, 'fetch', async (url, options) => {
     const { hostname, pathname } = new URL(url);
+    assert.equal(options.redirect, 'manual');
     if (hostname === 'api.tavily.com') {
       assert.equal(options.headers.authorization, `Bearer ${env.TAVILY_API_KEY}`);
       return Response.json({ results: [{ title: 'Fonte', url: 'https://fonte.example/', content: 'A fonte confirma a afirmação.' }] });
@@ -81,9 +96,9 @@ test('analisa texto e imagem, vincula fontes verificáveis e salva o relatório'
       const request = JSON.parse(options.body);
       if (saved === 1 && request.model === 'qwen/qwen3.8-27b') {
         assert.ok(request.messages[1].content[1].image_url.url.endsWith(expectedParts[1].inlineData.data));
-        return Response.json({ choices: [{ finish_reason: 'stop', message: { content: grounded.texto_analisado } }] });
+        return Response.json({ choices: [{ finish_reason: 'stop', message: { content: transcribedText } }] });
       }
-      const input = saved ? grounded.texto_analisado : expectedParts[0].text;
+      const input = saved ? transcribedText : expectedParts[0].text;
       return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({
         indicios_ia: null, limitacao: null, afirmacoes: [
           { texto: input, classificacao: 'sustentada', justificativa: 'A fonte confirma a afirmação.', fontes: [1] },
@@ -96,7 +111,7 @@ test('analisa texto e imagem, vincula fontes verificáveis e salva o relatório'
     if (pathname === '/auth/v1/user') return Response.json(googleUser);
     assert.equal(pathname, '/rest/v1/rpc/salvar_analise');
     const { relatorio } = JSON.parse(options.body);
-    assert.equal(relatorio.texto_analisado, saved ? grounded.texto_analisado : 'Texto enviado.');
+    assert.equal(relatorio.texto_analisado, saved ? transcribedText : 'Texto enviado.');
     assert.deepEqual(relatorio.fontes, [{ titulo: 'Fonte', url: 'https://fonte.example/' }]);
     assert.equal(relatorio.afirmacoes.length, 2);
     assert.deepEqual(relatorio.afirmacoes[0].fontes, [1]);
@@ -160,4 +175,39 @@ test('exige as duas chaves de análise e mantém o histórico disponível sem el
   });
   assert.equal(history.status, 200);
   assert.deepEqual(await history.json(), []);
+});
+
+test('ignora fontes inválidas e dispensa a Groq quando não há evidências', async t => {
+  const fetchMock = t.mock.method(globalThis, 'fetch', async url => {
+    assert.equal(new URL(url).hostname, 'api.tavily.com');
+    return Response.json({ results: [
+      null,
+      { url: 'https://user:password@source.test/', content: 'Trecho.' },
+      { url: 'file:///arquivo.txt', content: 'Trecho.' },
+    ] });
+  });
+  const report = await analyze(env, { text: 'Uma afirmação.' });
+  assert.deepEqual(report.fontes, []);
+  assert.deepEqual(report.afirmacoes, []);
+  assert.equal(fetchMock.mock.callCount(), 1);
+});
+
+test('expõe Retry-After e preserva CORS e no-store em erros da Groq', async t => {
+  t.mock.method(globalThis, 'fetch', async url => {
+    switch (new URL(url).hostname) {
+      case 'project.example': return Response.json(googleUser);
+      case 'api.tavily.com': return Response.json({ results: [{ url: 'https://source.test/', content: 'Trecho.' }] });
+      case 'api.groq.com': return new Response(null, { status: 429, headers: { 'retry-after': '12' } });
+      default: throw new Error('Chamada externa inesperada.');
+    }
+  });
+  const request = postText('Uma afirmação.');
+  request.headers.set('origin', env.ALLOWED_ORIGINS);
+  const response = await worker.fetch(request, env);
+  assert.equal(response.status, 429);
+  assert.equal(response.headers.get('retry-after'), '12');
+  assert.equal(response.headers.get('access-control-expose-headers'), 'Retry-After');
+  assert.equal(response.headers.get('access-control-allow-origin'), env.ALLOWED_ORIGINS);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.match((await response.json()).erro, /12 segundos/);
 });

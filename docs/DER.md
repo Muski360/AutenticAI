@@ -1,6 +1,6 @@
 # Diagrama entidade-relacionamento — AutenticAI
 
-Este é o modelo do histórico. A tabela de usuários pertence ao Supabase Auth, com login Google. [Migração SQL](../system/backend/supabase/migrations/20261119000000_historico.sql)
+Este é o modelo do histórico. A tabela de usuários pertence ao Supabase Auth, com acesso por Google ou e-mail e senha. [Migração SQL](../system/backend/supabase/migrations/20261119000000_historico.sql)
 
 ```mermaid
 erDiagram
