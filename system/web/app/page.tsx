@@ -4,13 +4,35 @@ import { createClient, type Session, type SupabaseClient } from "@supabase/supab
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AccessForm } from "./components/access-form";
-import { Brand, Icon, Investigation } from "./components/brand";
+import { Brand, Icon } from "./components/brand";
+import { ReportBody, Verdict, type ReportData } from "./components/report";
 import { Workspace } from "./components/workspace";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const api = process.env.NEXT_PUBLIC_API_URL;
 let client: SupabaseClient | undefined;
+
+const votingExample = {
+  afirmacoes: [
+    {
+      texto: "No Brasil, é obrigatório votar aos 16 anos.",
+      classificacao: "contradita",
+      justificativa: "O TSE informa que o voto é facultativo para jovens de 16 e 17 anos.",
+      fontes: [1],
+    },
+    {
+      texto: "O voto é facultativo para quem tem mais de 70 anos.",
+      classificacao: "sustentada",
+      justificativa: "O TSE inclui pessoas com mais de 70 anos entre os grupos para os quais o voto é facultativo.",
+      fontes: [1],
+    },
+  ],
+  fontes: [{
+    titulo: "Tribunal Superior Eleitoral · Quem pode votar",
+    url: "https://www.tse.jus.br/comunicacao/noticias/2026/Setembro/faltam-18-dias-quem-vota-quem-pode-votar-e-o-que-muda-aos-18-anos",
+  }],
+} satisfies ReportData;
 
 export default function Home() {
   const [session, setSession] = useState<Session | null>();
@@ -90,17 +112,34 @@ export default function Home() {
       </header>
       <main id="main-content" tabIndex={-1}>
         <section className="hero" aria-labelledby="hero-heading">
-          <div className="frame hero-grid">
-            <div className="hero-copy">
+          <div className="hero-grid">
+            <div className="hero-intro">
               <h1 id="hero-heading">Análise de<br /><span>informações</span></h1>
+              <p>Envie um texto ou print e confira as fontes de cada afirmação.</p>
+            </div>
+            <figure className="debate-hero">
+              <Image src="/brand/debate-stage.webp" alt="" fill preload unoptimized className="debate-image" />
+              <figcaption className="debate-caption">
+                <p>Exemplo de checagem</p>
+                <blockquote>“{votingExample.afirmacoes[0].texto}”</blockquote>
+                <div className="debate-caption-actions">
+                  <Verdict classification={votingExample.afirmacoes[0].classificacao} />
+                  <a className="debate-link" href="#exemplo">Ver exemplo <Icon name="right" /></a>
+                </div>
+              </figcaption>
+            </figure>
+            <div className="hero-access">
               {ready && client ? (
                 <AccessForm auth={client.auth} callbackError={error} clearCallbackError={() => setError("")} />
               ) : (
                 <p className="hero-note" role="status">{configured ? "Verificando sua sessão…" : "O acesso ainda não está disponível neste ambiente."}</p>
               )}
             </div>
-            <Investigation />
           </div>
+        </section>
+        <section className="frame landing-section" id="exemplo" tabIndex={-1} aria-labelledby="example-title">
+          <h2 id="example-title">Relatório de exemplo</h2>
+          <ReportBody report={votingExample} />
         </section>
         <section className="method" id="metodo" aria-labelledby="method-title">
           <div className="frame">
@@ -113,14 +152,6 @@ export default function Home() {
               <li><span aria-hidden="true">02</span><p>Revise o conteúdo antes de enviar.</p><Icon name="shield" /></li>
               <li><span aria-hidden="true">03</span><p>Consulte as justificativas e fontes.</p><Icon name="search" /></li>
             </ol>
-          </div>
-        </section>
-        <section className="frame landing-section" id="exemplo" tabIndex={-1} aria-labelledby="example-title">
-          <h2 id="example-title">Relatório de exemplo</h2>
-          <div className="example-report">
-            <blockquote>“A Lua emite luz própria.”</blockquote>
-            <p className="verdict" data-verdict="contradita">Contradita</p>
-            <p className="example-explanation">A superfície da Lua reflete a luz do Sol.</p>
           </div>
         </section>
         <section className="platforms" id="plataformas" aria-labelledby="platforms-title">

@@ -1,21 +1,11 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { historyPageSize, historyTitleText, maxText, requestAnalysis, sourceUrl } from "../../../analysis-client.mjs";
+import { historyPageSize, historyTitleText, maxText, requestAnalysis } from "../../../analysis-client.mjs";
 import { Icon } from "./brand";
+import { ReportBody, type ReportData } from "./report";
 
 type Summary = { id: string; criada_em: string; texto_analisado: string };
-const classifications = {
-  sustentada: "Sustentada",
-  contradita: "Contradita",
-  mista: "Evidências mistas",
-  inconclusiva: "Inconclusiva",
-};
-type Report = Pick<Summary, "id" | "texto_analisado"> & {
-  afirmacoes: { texto: string; classificacao: keyof typeof classifications; justificativa: string; fontes: number[] }[];
-  fontes: { titulo: string; url: string }[];
-  indicios_ia: string | null;
-  limitacao: string | null;
-};
+type Report = ReportData & { id: string };
 type Input = { text: string } | { file: File; url: string };
 const maxImage = 5 * 1024 * 1024;
 const imageTypes = ["image/png", "image/jpeg", "image/webp"];
@@ -235,46 +225,5 @@ export function Workspace({ api, token }: { api: string; token: string }) {
         </div>}
       </section>
     </>
-  );
-}
-
-function ReportBody({ report }: { report: Report }) {
-  return (
-    <div className="report-layout">
-      <div className="panel panel-body report-claims">
-      {report.texto_analisado && <details><summary>Texto analisado</summary><p className="content">{report.texto_analisado}</p></details>}
-      {report.limitacao && <p className="feedback warning">{report.limitacao}</p>}
-      {report.afirmacoes.length === 0 && <p className="empty-state">Nenhuma afirmação verificável foi identificada.</p>}
-      {report.afirmacoes.map((claim, index) => (
-        <article className="claim" key={index}>
-          <h3>{claim.texto}</h3>
-          <p className="verdict" data-verdict={claim.classificacao}>{classifications[claim.classificacao]}</p>
-          <p>{claim.justificativa}</p>
-          {claim.fontes.length > 0 && <p>Fontes: {claim.fontes.map(number => (
-            report.fontes[number - 1] && <a className="reference" key={number} href={`#source-${number}`} aria-label={`Fonte ${number}`}>{number}</a>
-          ))}</p>}
-        </article>
-      ))}
-      </div>
-      <aside className="panel panel-body report-sources" aria-label="Fontes e sugestões">
-      <h3>Fontes</h3>
-      {report.fontes.length === 0 && <p className="guide">Nenhuma fonte disponível para este relatório.</p>}
-      {report.fontes.length > 0 && (
-          <ol className="sources">
-            {report.fontes.map((source, index) => {
-              const url = sourceUrl(source.url);
-              return <li id={`source-${index + 1}`} key={index} tabIndex={-1}>
-                {url ? <a href={url} target="_blank" rel="noreferrer">{source.titulo} <Icon name="arrow" /></a> : source.titulo}
-              </li>;
-            })}
-          </ol>
-      )}
-      </aside>
-      <div className="panel panel-body ai-note">
-        <h3>Indícios de conteúdo gerado por IA</h3>
-        <p>{report.indicios_ia || "O relatório não apontou indícios."}</p>
-        <p className="field-note">Indícios não confirmam autoria.</p>
-      </div>
-    </div>
   );
 }
